@@ -35,9 +35,9 @@ export function Navbar() {
 
           {/* Logo */}
           <Link href="/" className="flex items-center gap-2 group shrink-0" onClick={() => setMobileOpen(false)}>
-            <div className="flex flex-col items-start justify-center">
+            <div className="flex flex-col items-start justify-center py-1">
               <span className="text-xl sm:text-2xl font-black text-red-600 leading-none">ARUSH</span>
-              <span className="text-[10px] sm:text-xs font-bold text-[#1E3A8A] uppercase tracking-wider leading-none mt-1">
+              <span className="text-xs sm:text-sm font-bold text-[#1E3A8A] uppercase tracking-normal leading-tight mt-1 flex">
                 Lab &amp; Diagnostics
               </span>
             </div>
