@@ -54,66 +54,77 @@ export function Pricing() {
 
   const handleDownloadPDF = async () => {
     setIsGenerating(true);
-    const element = tableRef.current;
-    if (!element) return;
 
     try {
-      // Temporarily hide actions column for PDF by duplicating the table node
-      const pdfNode = element.cloneNode(true) as HTMLDivElement;
-      document.body.appendChild(pdfNode);
-      pdfNode.style.width = "800px";
-      pdfNode.style.padding = "40px";
-      pdfNode.style.background = "white";
-      pdfNode.style.position = "absolute";
-      pdfNode.style.left = "-9999px";
-      pdfNode.style.pointerEvents = "none";
+      const doc = new jsPDF("p", "pt", "a4");
+      const margin = 40;
+      let yPos = 50;
 
-      // Add a header specially for PDF
-      const headerHtml = `
-        <div style="text-align: center; margin-bottom: 30px; border-bottom: 2px solid #1E3A8A; padding-bottom: 20px; background: white;">
-          <h1 style="color: #EF4444 !important; font-size: 32px; margin: 0; font-weight: bold;">ARUSH <span style="color: #1E3A8A !important;">Lab & Diagnostics</span></h1>
-          <p style="color: #64748b !important; margin: 10px 0 0 0;">Beside Sangmeshwar Hospital, Canara Bank to KEB Road, Bidar - 585403</p>
-          <p style="color: #64748b !important; margin: 5px 0 0 0;">Ph: 9482724054 / 7483554790</p>
-          <h2 style="color: #0f172a !important; margin-top: 20px; font-weight: bold;">Complete Test Price List</h2>
-          <p style="color: #64748b !important; font-size: 12px;">Generated on: ${new Date().toLocaleDateString()}</p>
-        </div>
-      `;
-      pdfNode.insertAdjacentHTML('afterbegin', headerHtml);
+      // Header
+      doc.setTextColor(239, 68, 68); // Brand Red
+      doc.setFontSize(28);
+      doc.setFont("helvetica", "bold");
+      doc.text("ARUSH", margin, yPos);
+      
+      doc.setTextColor(30, 58, 138); // Brand Navy
+      doc.setFontSize(20);
+      doc.text("Lab & Diagnostics", margin + 105, yPos);
+      
+      yPos += 25;
+      doc.setFontSize(10);
+      doc.setFont("helvetica", "normal");
+      doc.setTextColor(100, 116, 139);
+      doc.text("Beside Sangmeshwar Hospital, Canara Bank to KEB Road, Bidar - 585403", margin, yPos);
+      
+      yPos += 15;
+      doc.text("Ph: 9482724054 / 7483554790", margin, yPos);
 
-      // Sanitize colors for html2canvas (convert CSS variables/modern colors to hex)
-      const allElements = pdfNode.querySelectorAll('*');
-      allElements.forEach((el) => {
-        const style = window.getComputedStyle(el as Element);
-        (el as HTMLElement).style.color = '#0f172a';
-        if (el.tagName === 'TH') {
-           (el as HTMLElement).style.backgroundColor = '#f8fafc';
-           (el as HTMLElement).style.color = '#1e3a8a';
+      yPos += 30;
+      doc.setDrawColor(30, 58, 138);
+      doc.setLineWidth(2);
+      doc.line(margin, yPos, 555, yPos);
+
+      yPos += 40;
+      doc.setFontSize(18);
+      doc.setTextColor(15, 23, 42);
+      doc.text("Complete Test Price List", margin, yPos);
+      
+      doc.setFontSize(9);
+      doc.setTextColor(148, 163, 184);
+      doc.text(`Generated on: ${new Date().toLocaleDateString()}`, 450, yPos);
+
+      yPos += 30;
+      // Table Header
+      doc.setFillColor(248, 250, 252);
+      doc.rect(margin, yPos, 515, 30, "F");
+      
+      doc.setFontSize(11);
+      doc.setFont("helvetica", "bold");
+      doc.setTextColor(30, 58, 138);
+      doc.text("Test Name", margin + 10, yPos + 20);
+      doc.text("Price (INR)", 480, yPos + 20);
+
+      yPos += 45;
+      doc.setFont("helvetica", "normal");
+      doc.setTextColor(51, 65, 85);
+      
+      filteredData.forEach((test, index) => {
+        if (yPos > 780) {
+          doc.addPage();
+          yPos = 50;
         }
-        if (el.tagName === 'TD') {
-           (el as HTMLElement).style.borderBottom = '1px solid #f1f5f9';
-        }
+        
+        doc.text(test.name, margin + 10, yPos);
+        doc.text(`Rs. ${test.price}/-`, 480, yPos);
+        
+        doc.setDrawColor(241, 245, 249);
+        doc.setLineWidth(1);
+        doc.line(margin, yPos + 8, 555, yPos + 8);
+        
+        yPos += 25;
       });
 
-      // Remove actions columns inside the duplicated node
-      const actionCells = pdfNode.querySelectorAll('.action-col');
-      actionCells.forEach(cell => cell.remove());
-
-      const canvas = await html2canvas(pdfNode, { 
-        scale: 2,
-        useCORS: true,
-        backgroundColor: '#ffffff',
-        logging: true
-      });
-      const imgData = canvas.toDataURL("image/png", 1.0);
-      const pdf = new jsPDF("p", "pt", "a4");
-      
-      const pdfWidth = pdf.internal.pageSize.getWidth();
-      const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
-      
-      pdf.addImage(imgData, "PNG", 0, 0, pdfWidth, pdfHeight);
-      pdf.save("ARUSH_Lab_Price_List.pdf");
-      
-      document.body.removeChild(pdfNode);
+      doc.save("ARUSH_Lab_Price_List.pdf");
     } catch (error) {
       console.error("PDF generation failed", error);
     } finally {
