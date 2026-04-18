@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { Download, Search, MessageCircle } from "lucide-react";
-import jsPDF from "jspdf";
+import { jsPDF } from "jspdf";
 
 const PRICING_DATA = [
   { name: "CBC", price: 300 },
@@ -55,6 +55,7 @@ export function Pricing() {
     setIsGenerating(true);
 
     try {
+      window.alert("Latest Pricing List System Active - Generating PDF...");
       console.log("Starting ARUSH PDF Generation (Manual Mode)...");
       const doc = new jsPDF("p", "pt", "a4");
       const margin = 40;
