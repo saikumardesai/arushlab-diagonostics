@@ -1,36 +1,30 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# ARUSH Lab & Diagnostics
 
-## Getting Started
+A premium modern medical diagnostic lab website built with Next.js, Tailwind CSS, and shadcn/ui.
 
-First, run the development server:
+## Features
+- Fully responsive modern design with medical aesthetics
+- Searchable and transparent diagnostic test pricing table
+- Built-in PDF generation for pricing sheets
+- Quick CTA buttons linking to WhatsApp for Home Sample Collection 
 
-```bash
+## Development
+
+\`\`\`bash
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+\`\`\`
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open http://localhost:3000 with your browser to see the result.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Cloudflare Pages Deployment (Free Hosting)
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Follow these steps to deploy this repository using your Cloudflare account.
 
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Step 1: Push code to GitHub
+Step 2: Go to https://pages.cloudflare.com
+Step 3: Connect GitHub repo
+Step 4: Set build command: `npx @cloudflare/next-on-pages`
+Step 5: Set output directory: `.vercel/output/static`
+Step 6: Click Deploy — site goes live on free `arush-lab.pages.dev` URL
+Step 7: Add custom domain (optional) for free in Cloudflare dashboard
