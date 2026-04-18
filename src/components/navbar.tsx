@@ -35,12 +35,14 @@ export function Navbar() {
 
           {/* Logo */}
           <Link href="/" className="flex items-center gap-2 group shrink-0" onClick={() => setMobileOpen(false)}>
-            <span className="flex items-baseline gap-1 sm:gap-1.5 flex-nowrap whitespace-nowrap">
-              <span className="text-lg sm:text-2xl font-black tracking-tighter sm:tracking-tight text-red-600">ARUSH</span>
-              <span className="text-[10px] sm:text-base font-bold text-[#1E3A8A] tracking-normal sm:tracking-wide">
-                Lab &amp; Diagnostics
-              </span>
-            </span>
+            <div className="flex items-center gap-1.5 sm:gap-2 no-underline">
+              <span className="text-xl sm:text-2xl font-black tracking-tight text-red-600 leading-none">ARUSH</span>
+              <div className="h-4 sm:h-6 w-0.5 bg-slate-300 rounded-full" />
+              <div className="flex flex-col justify-center">
+                <span className="text-[10px] sm:text-sm font-bold text-[#1E3A8A] leading-none uppercase tracking-wider">Lab &amp;</span>
+                <span className="text-[10px] sm:text-sm font-bold text-[#1E3A8A] leading-none uppercase tracking-wider">Diagnostics</span>
+              </div>
+            </div>
           </Link>
 
           {/* Desktop Nav */}
