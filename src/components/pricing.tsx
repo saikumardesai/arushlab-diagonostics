@@ -32,6 +32,17 @@ const PRICING_DATA = [
   { name: "Lipid Profile", price: 400 },
 ];
 
+import { motion, type Variants } from "framer-motion";
+
+const containerVariants: Variants = {
+  hidden: { opacity: 0, y: 30 },
+  visible: { 
+    opacity: 1, 
+    y: 0,
+    transition: { duration: 0.6, ease: "easeOut" }
+  }
+};
+
 export function Pricing() {
   const [searchTerm, setSearchTerm] = useState("");
   const [isGenerating, setIsGenerating] = useState(false);
@@ -97,17 +108,29 @@ export function Pricing() {
   };
 
   return (
-    <section id="pricing" className="py-24 bg-slate-50 border-t border-slate-200">
+    <section id="pricing" className="py-24 bg-slate-50 border-t border-slate-200 overflow-hidden">
       <div className="container mx-auto px-4 max-w-5xl">
-        <div className="text-center mb-12">
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6 }}
+          className="text-center mb-12"
+        >
           <h2 className="text-sm font-bold text-brand-cta uppercase tracking-wider mb-2">Transparent Pricing</h2>
           <h3 className="text-3xl md:text-5xl font-extrabold text-slate-900 mb-4">Diagnostic Test Prices</h3>
           <p className="text-lg text-slate-600 max-w-2xl mx-auto">
             We believe in complete transparency. Find the exact cost of your tests below, with zero hidden charges.
           </p>
-        </div>
+        </motion.div>
 
-        <div className="bg-white rounded-2xl shadow-xl border border-slate-100 flex flex-col pt-2 relative z-10 overflow-hidden">
+        <motion.div 
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: "-100px" }}
+          variants={containerVariants}
+          className="bg-white rounded-3xl shadow-2xl border border-slate-100 flex flex-col pt-2 relative z-10 overflow-hidden"
+        >
           <div className="p-6 border-b border-slate-100 flex flex-col sm:flex-row gap-4 justify-between items-center bg-white/95 backdrop-blur z-20">
             <div className="relative w-full sm:w-96">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
@@ -173,7 +196,7 @@ export function Pricing() {
               </TableBody>
             </Table>
           </div>
-        </div>
+        </motion.div>
       </div>
     </section>
   );

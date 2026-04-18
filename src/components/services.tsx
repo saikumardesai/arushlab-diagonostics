@@ -4,6 +4,27 @@ import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/com
 import { motion } from "framer-motion";
 import { Droplet, Activity, FlaskConical, Stethoscope, HeartPulse, Microscope, Target, Sparkles, TestTube } from "lucide-react";
 
+const containerVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.1,
+    },
+  },
+};
+
+const itemVariants = {
+  hidden: { opacity: 0, y: 20 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: {
+      duration: 0.5,
+    },
+  },
+};
+
 export const SERVICES = [
   {
     title: "Hematology",
@@ -49,26 +70,34 @@ export const SERVICES = [
 
 export function Services() {
   return (
-    <section id="services" className="py-24 bg-white">
-      <div className="container mx-auto px-4">
-        <div className="text-center max-w-3xl mx-auto mb-16">
-          <h2 className="text-sm font-bold text-brand-cta uppercase tracking-wider mb-2">Our Capabilities</h2>
-          <h3 className="text-3xl md:text-5xl font-extrabold text-slate-900 mb-4">Complete Diagnostic Services</h3>
-          <p className="text-lg text-slate-600">
-            We offer a comprehensive range of advanced pathological and diagnostic services to cater to all your health needs with precision.
-          </p>
-        </div>
+    <section id="services" className="py-24 bg-white relative overflow-hidden">
+      <div className="container mx-auto px-4 relative z-10">
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6 }}
+          className="text-center max-w-3xl mx-auto mb-16"
+        >
+          <p className="text-teal-600 font-bold uppercase tracking-widest text-sm mb-4">What We Offer</p>
+          <h2 className="text-3xl md:text-5xl font-black text-slate-900 mb-6">World-Class Diagnostic Solutions</h2>
+          <div className="h-1.5 w-24 bg-red-600 mx-auto rounded-full" />
+        </motion.div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        <motion.div 
+          variants={containerVariants}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: "-100px" }}
+          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6"
+        >
           {SERVICES.map((service, index) => (
             <motion.div
               key={index}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.5, delay: index * 0.1 }}
+              variants={itemVariants}
+              whileHover={{ y: -10, transition: { duration: 0.3 } }}
             >
-              <Card className="h-full border-slate-100 shadow-sm hover:shadow-xl transition-all duration-300 group hover:-translate-y-1">
+              <Card className="h-full border-slate-100 shadow-sm hover:shadow-xl transition-all duration-300 group">
                 <CardHeader>
                   <div className="mb-4 p-3 w-16 h-16 rounded-2xl bg-slate-50 group-hover:bg-blue-50 transition-colors flex items-center justify-center">
                     {service.icon}
@@ -83,7 +112,7 @@ export function Services() {
               </Card>
             </motion.div>
           ))}
-        </div>
+        </motion.div>
       </div>
     </section>
   );
