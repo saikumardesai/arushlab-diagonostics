@@ -55,7 +55,7 @@ export function Pricing() {
     setIsGenerating(true);
 
     try {
-      window.alert("Latest Pricing List System Active - Generating PDF...");
+      window.alert("Generating Test Price List PDF...");
       console.log("Starting ARUSH PDF Generation (Manual Mode)...");
       const doc = new jsPDF("p", "pt", "a4");
       const margin = 40;
