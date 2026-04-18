@@ -35,13 +35,9 @@ export function Navbar() {
 
           {/* Logo */}
           <Link href="/" className="flex items-center gap-2 group shrink-0" onClick={() => setMobileOpen(false)}>
-            <div className="flex items-center gap-1.5 sm:gap-2">
-              <span className="text-xl sm:text-2xl font-black text-red-600 leading-none">ARUSH</span>
-              <div className="h-6 w-0.5 bg-slate-200" />
-              <div className="flex flex-col">
-                <span className="text-[10px] sm:text-sm font-bold text-[#1E3A8A] leading-none uppercase">Lab &amp;</span>
-                <span className="text-[10px] sm:text-sm font-bold text-[#1E3A8A] leading-none uppercase">Diagnostics</span>
-              </div>
+            <div className="flex items-center gap-1.5 flex-nowrap shrink-0">
+              <span className="text-xl sm:text-2xl font-bold text-red-600">ARUSH</span>
+              <span className="text-xs sm:text-base font-bold text-[#1E3A8A]">Lab &amp; Diagnostics</span>
             </div>
           </Link>
 
