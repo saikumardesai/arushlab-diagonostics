@@ -54,8 +54,11 @@ export function Footer() {
         </div>
       </div>
       
-      <div className="container mx-auto px-4 pt-8 border-t border-white/10 text-center text-sm text-blue-200">
+      <div className="container mx-auto px-4 pt-8 border-t border-white/10 flex flex-col sm:flex-row justify-between items-center gap-4 text-sm text-blue-200">
         <p>&copy; {new Date().getFullYear()} ARUSH Lab &amp; Diagnostics. All rights reserved.</p>
+        <div className="px-3 py-1 bg-white/5 rounded-full text-[10px] uppercase tracking-widest text-blue-300/50 border border-white/5">
+          System Version: v1.0.12
+        </div>
       </div>
     </footer>
   );
