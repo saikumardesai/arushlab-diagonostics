@@ -70,21 +70,40 @@ export function Pricing() {
 
       // Add a header specially for PDF
       const headerHtml = `
-        <div style="text-align: center; margin-bottom: 30px; border-bottom: 2px solid #1E3A8A; padding-bottom: 20px;">
-          <h1 style="color: #EF4444; font-size: 32px; margin: 0; font-weight: bold;">ARUSH <span style="color: #1E3A8A;">Lab & Diagnostics</span></h1>
-          <p style="color: #64748b; margin: 10px 0 0 0;">Beside Sangmeshwar Hospital, Canara Bank to KEB Road, Bidar - 585403</p>
-          <p style="color: #64748b; margin: 5px 0 0 0;">Ph: 9482724054 / 7483554790</p>
-          <h2 style="color: #0f172a; margin-top: 20px; font-weight: bold;">Complete Test Price List</h2>
-          <p style="color: #64748b; font-size: 12px;">Generated on: ${new Date().toLocaleDateString()}</p>
+        <div style="text-align: center; margin-bottom: 30px; border-bottom: 2px solid #1E3A8A; padding-bottom: 20px; background: white;">
+          <h1 style="color: #EF4444 !important; font-size: 32px; margin: 0; font-weight: bold;">ARUSH <span style="color: #1E3A8A !important;">Lab & Diagnostics</span></h1>
+          <p style="color: #64748b !important; margin: 10px 0 0 0;">Beside Sangmeshwar Hospital, Canara Bank to KEB Road, Bidar - 585403</p>
+          <p style="color: #64748b !important; margin: 5px 0 0 0;">Ph: 9482724054 / 7483554790</p>
+          <h2 style="color: #0f172a !important; margin-top: 20px; font-weight: bold;">Complete Test Price List</h2>
+          <p style="color: #64748b !important; font-size: 12px;">Generated on: ${new Date().toLocaleDateString()}</p>
         </div>
       `;
       pdfNode.insertAdjacentHTML('afterbegin', headerHtml);
+
+      // Sanitize colors for html2canvas (convert CSS variables/modern colors to hex)
+      const allElements = pdfNode.querySelectorAll('*');
+      allElements.forEach((el) => {
+        const style = window.getComputedStyle(el as Element);
+        (el as HTMLElement).style.color = '#0f172a';
+        if (el.tagName === 'TH') {
+           (el as HTMLElement).style.backgroundColor = '#f8fafc';
+           (el as HTMLElement).style.color = '#1e3a8a';
+        }
+        if (el.tagName === 'TD') {
+           (el as HTMLElement).style.borderBottom = '1px solid #f1f5f9';
+        }
+      });
 
       // Remove actions columns inside the duplicated node
       const actionCells = pdfNode.querySelectorAll('.action-col');
       actionCells.forEach(cell => cell.remove());
 
-      const canvas = await html2canvas(pdfNode, { scale: 2 });
+      const canvas = await html2canvas(pdfNode, { 
+        scale: 2,
+        useCORS: true,
+        backgroundColor: '#ffffff',
+        logging: true
+      });
       const imgData = canvas.toDataURL("image/png", 1.0);
       const pdf = new jsPDF("p", "pt", "a4");
       
