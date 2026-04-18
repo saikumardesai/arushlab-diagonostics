@@ -35,9 +35,9 @@ export function Navbar() {
 
           {/* Logo */}
           <Link href="/" className="flex items-center gap-2 group shrink-0" onClick={() => setMobileOpen(false)}>
-            <span className="flex flex-col sm:flex-row sm:items-baseline sm:gap-1.5 leading-none">
-              <span className="text-xl sm:text-2xl font-black tracking-tight text-red-600">ARUSH</span>
-              <span className="text-[10px] sm:text-base font-semibold text-[#1E3A8A] tracking-wide leading-tight mt-0.5 sm:mt-0">
+            <span className="flex items-baseline gap-1 sm:gap-1.5 flex-nowrap whitespace-nowrap">
+              <span className="text-lg sm:text-2xl font-black tracking-tighter sm:tracking-tight text-red-600">ARUSH</span>
+              <span className="text-[10px] sm:text-base font-bold text-[#1E3A8A] tracking-normal sm:tracking-wide">
                 Lab &amp; Diagnostics
               </span>
             </span>
