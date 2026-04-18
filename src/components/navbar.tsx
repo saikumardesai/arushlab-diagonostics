@@ -35,12 +35,11 @@ export function Navbar() {
 
           {/* Logo */}
           <Link href="/" className="flex items-center gap-2 group shrink-0" onClick={() => setMobileOpen(false)}>
-            <span className="relative">
-              <span className="absolute inset-x-0 bottom-0 h-[2px] bg-gradient-to-r from-red-500 to-red-700 rounded-full scale-x-0 group-hover:scale-x-100 transition-transform origin-left duration-300" />
-              <span className="text-2xl font-black tracking-tight text-red-600">ARUSH</span>
-            </span>
-            <span className="text-base font-semibold text-[#1E3A8A] tracking-wide hidden sm:block leading-tight">
-              Lab &amp; Diagnostics
+            <span className="flex flex-col sm:flex-row sm:items-baseline sm:gap-1.5 leading-none">
+              <span className="text-xl sm:text-2xl font-black tracking-tight text-red-600">ARUSH</span>
+              <span className="text-[10px] sm:text-base font-semibold text-[#1E3A8A] tracking-wide leading-tight mt-0.5 sm:mt-0">
+                Lab &amp; Diagnostics
+              </span>
             </span>
           </Link>
 
