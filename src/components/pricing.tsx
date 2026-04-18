@@ -7,7 +7,6 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Badge } from "@/components/ui/badge";
 import { Download, Search, MessageCircle } from "lucide-react";
 import jsPDF from "jspdf";
-import html2canvas from "html2canvas";
 
 const PRICING_DATA = [
   { name: "CBC", price: 300 },
@@ -46,7 +45,7 @@ const containerVariants: Variants = {
 export function Pricing() {
   const [searchTerm, setSearchTerm] = useState("");
   const [isGenerating, setIsGenerating] = useState(false);
-  const tableRef = useRef<HTMLDivElement>(null);
+  // tableRef no longer needed for manual PDF generation
 
   const filteredData = PRICING_DATA.filter((test) =>
     test.name.toLowerCase().includes(searchTerm.toLowerCase())
@@ -56,6 +55,7 @@ export function Pricing() {
     setIsGenerating(true);
 
     try {
+      console.log("Starting ARUSH PDF Generation (Manual Mode)...");
       const doc = new jsPDF("p", "pt", "a4");
       const margin = 40;
       let yPos = 50;
@@ -181,7 +181,7 @@ export function Pricing() {
             </Button>
           </div>
 
-          <div className="overflow-x-auto w-full p-6 text-left" ref={tableRef}>
+          <div className="overflow-x-auto w-full p-6 text-left">
             <Table>
               <TableHeader>
                 <TableRow className="hover:bg-transparent border-b-2 border-slate-100">
