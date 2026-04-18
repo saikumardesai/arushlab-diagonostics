@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { Phone, MapPin, Mail, Clock } from "lucide-react";
+import { Phone, MapPin, Clock } from "lucide-react";
 
 export function Footer() {
   return (

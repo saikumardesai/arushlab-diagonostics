@@ -18,7 +18,7 @@ export function Contact() {
           <h2 className="text-sm font-bold text-brand-cta uppercase tracking-wider mb-2">Get in Touch</h2>
           <h3 className="text-3xl md:text-5xl font-extrabold text-slate-900 mb-4">Contact &amp; Location</h3>
           <p className="text-lg text-slate-600">
-            Visit our lab, give us a call, or send us a message. We're here to help you 24/7.
+            Visit our lab, give us a call, or send us a message. We&apos;re here to help you 24/7.
           </p>
         </div>
 

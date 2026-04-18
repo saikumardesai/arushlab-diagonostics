@@ -14,7 +14,7 @@ export function HomeCollection() {
             <Clock className="w-4 h-4 mr-2" /> 24/7 Service Available
           </Badge>
           <h2 className="text-3xl md:text-5xl font-extrabold mb-4 leading-tight drop-shadow-sm">
-            Can't visit us? <span className="text-[#FFE6E6]">We come to you!</span>
+            Can&apos;t visit us? <span className="text-[#FFE6E6]">We come to you!</span>
           </h2>
           <p className="text-lg md:text-xl text-red-50 font-medium max-w-xl mx-auto md:mx-0">
             Book our highly trained phlebotomists for a safe and hygienic home sample collection at your convenience.

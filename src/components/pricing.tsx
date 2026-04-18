@@ -165,7 +165,7 @@ export function Pricing() {
                 {filteredData.length === 0 ? (
                   <TableRow>
                     <TableCell colSpan={4} className="h-40 text-center text-slate-500 text-lg">
-                      No tests found matching "{searchTerm}"
+                      No tests found matching &quot;{searchTerm}&quot;
                     </TableCell>
                   </TableRow>
                 ) : (

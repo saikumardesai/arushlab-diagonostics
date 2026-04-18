@@ -2,7 +2,7 @@
 
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
 import { motion } from "framer-motion";
-import { Droplet, Activity, FlaskConical, Stethoscope, HeartPulse, Microscope, Target, Sparkles, TestTube } from "lucide-react";
+import { Droplet, Activity, FlaskConical, HeartPulse, Microscope, Target, Sparkles, TestTube } from "lucide-react";
 
 const containerVariants = {
   hidden: { opacity: 0 },
