@@ -48,8 +48,8 @@ export function Contact() {
                   <div>
                     <h4 className="text-xl font-bold text-slate-900 mb-2">Call Us 24/7</h4>
                     <div className="flex flex-col gap-1.5">
-                      <a href="tel:9482724054" className="text-brand-primary font-bold hover:underline text-lg">9482724054</a>
-                      <a href="tel:7483554790" className="text-brand-primary font-bold hover:underline text-lg">7483554790</a>
+                      <a href="tel:+919482724054" className="text-brand-primary font-bold hover:underline text-lg">9482724054</a>
+                      <a href="tel:+917483554790" className="text-brand-primary font-bold hover:underline text-lg">7483554790</a>
                     </div>
                   </div>
                 </div>

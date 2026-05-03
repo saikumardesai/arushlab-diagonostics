@@ -31,7 +31,7 @@ export function HomeCollection() {
           >
             Book Home Collection
           </Button>
-          <p className="text-base text-center md:text-right text-red-50 mt-2 font-medium">Or call us: <a href="tel:9482724054" className="underline hover:text-white transition-colors font-bold"><Phone className="w-4 h-4 inline mb-0.5" /> 9482724054</a></p>
+          <p className="text-base text-center md:text-right text-red-50 mt-2 font-medium">Or call us: <a href="tel:+919482724054" className="underline hover:text-white transition-colors font-bold"><Phone className="w-4 h-4 inline mb-0.5" /> 9482724054</a></p>
         </div>
       </div>
     </section>

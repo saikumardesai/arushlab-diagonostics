@@ -54,7 +54,7 @@ export function Navbar() {
 
           {/* Desktop CTA */}
           <div className="hidden md:flex items-center gap-2">
-            <a href="tel:9482724054" className="flex items-center gap-1.5 text-sm font-medium text-slate-600 hover:text-[#1E3A8A] transition-colors">
+            <a href="tel:+919482724054" className="flex items-center gap-1.5 text-sm font-medium text-slate-600 hover:text-[#1E3A8A] transition-colors">
               <Phone className="w-4 h-4" /> 9482724054
             </a>
             <Button className="bg-[#0D9488] hover:bg-teal-700 text-white rounded-full px-5 py-2 ml-2 text-sm font-semibold shadow-sm hover:shadow-md transition-all hover:scale-105">
@@ -95,7 +95,7 @@ export function Navbar() {
                 </Link>
               ))}
               <hr className="my-2 border-slate-100" />
-              <a href="tel:9482724054" className="flex items-center gap-2 text-base font-semibold text-[#1E3A8A] py-3 px-4 rounded-xl hover:bg-blue-50 transition-colors">
+              <a href="tel:+919482724054" className="flex items-center gap-2 text-base font-semibold text-[#1E3A8A] py-3 px-4 rounded-xl hover:bg-blue-50 transition-colors">
                 <Phone className="w-5 h-5" /> Call: 9482724054
               </a>
               <Button className="mt-2 bg-[#0D9488] hover:bg-teal-700 text-white rounded-xl py-5 text-base font-bold">

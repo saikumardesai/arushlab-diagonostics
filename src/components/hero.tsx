@@ -139,7 +139,7 @@ export function Hero() {
               variant="outline"
               className="w-full sm:w-auto bg-white/5 hover:bg-white/15 border border-white/25 text-white backdrop-blur-sm rounded-full px-8 py-6 text-base sm:text-lg font-semibold transition-all hover:scale-105"
             >
-              <a href="tel:9482724054" className="flex items-center justify-center gap-2 w-full">
+              <a href="tel:+919482724054" className="flex items-center justify-center gap-2 w-full">
                 <Phone className="w-5 h-5" /> Call Now
               </a>
             </Button>
