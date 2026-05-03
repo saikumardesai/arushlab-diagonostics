@@ -98,7 +98,7 @@ export function Navbar() {
                 </Link>
               ))}
               <Link
-                  href="/track/ARUSH-4201"
+                  href="/track?id=ARUSH-4201"
                   className="block px-4 py-3 text-base font-bold text-blue-600 rounded-xl hover:bg-blue-50 transition-colors bg-blue-50/50"
                   onClick={() => setMobileOpen(false)}
                 >
