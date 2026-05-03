@@ -110,25 +110,30 @@ export function Hero() {
           {/* CTA Buttons */}
           <motion.div
             variants={itemVariants}
-            className="flex flex-col sm:flex-row flex-wrap justify-center items-center gap-4 w-full sm:w-auto mb-16"
+            className="flex flex-col md:flex-row flex-wrap justify-center items-center gap-4 w-full sm:w-auto mb-16"
           >
             <Button
               size="lg"
-              onClick={() => {
-                const msg = `Hello ARUSH Lab & Diagnostics,\nI have a doctor's prescription. Please check the uploaded photo and let me know the pricing and next steps.`;
-                window.open(`https://wa.me/919482724054?text=${encodeURIComponent(msg)}`, '_blank');
-              }}
-              className="w-full sm:w-auto bg-[#25D366] hover:bg-[#20bd5a] text-white rounded-full px-8 py-6 text-base sm:text-lg font-bold group shadow-lg shadow-green-900/40 hover:shadow-green-500/30 hover:scale-105 transition-all flex items-center justify-center gap-2"
+              asChild
+              className="w-full sm:w-auto bg-[#25D366] hover:bg-[#20bd5a] text-white rounded-full px-8 py-6 text-base sm:text-lg font-bold group shadow-lg shadow-green-900/40 hover:shadow-green-500/30 hover:scale-105 transition-all"
             >
-              <FileText className="w-5 h-5 animate-pulse" />
-              Upload Prescription
+              <a 
+                href={`https://wa.me/919482724054?text=${encodeURIComponent("Hello ARUSH Lab & Diagnostics,\nI have a doctor's prescription. Please check the uploaded photo and let me know the pricing and next steps.")}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center justify-center gap-2"
+              >
+                <FileText className="w-5 h-5 animate-pulse" />
+                Upload Prescription
+              </a>
             </Button>
             
             <Button
               size="lg"
+              asChild
               className="w-full sm:w-auto bg-[#0D9488] hover:bg-teal-600 text-white rounded-full px-8 py-6 text-base sm:text-lg font-semibold group shadow-lg shadow-teal-900/40 hover:shadow-teal-500/30 hover:scale-105 transition-all"
             >
-              <Link href="#pricing" className="flex items-center justify-center gap-2 w-full">
+              <Link href="#pricing" className="flex items-center justify-center gap-2">
                 View Test Prices
                 <ChevronRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
               </Link>
@@ -137,9 +142,10 @@ export function Hero() {
             <Button
               size="lg"
               variant="outline"
+              asChild
               className="w-full sm:w-auto bg-white/5 hover:bg-white/15 border border-white/25 text-white backdrop-blur-sm rounded-full px-8 py-6 text-base sm:text-lg font-semibold transition-all hover:scale-105"
             >
-              <a href="tel:+919482724054" className="flex items-center justify-center gap-2 w-full">
+              <a href="tel:+919482724054" className="flex items-center justify-center gap-2">
                 <Phone className="w-5 h-5" /> Call Now
               </a>
             </Button>
