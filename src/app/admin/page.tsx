@@ -230,6 +230,12 @@ export default function AdminDashboard() {
           <span className="text-sm font-medium text-slate-500 bg-slate-100 px-3 py-1 rounded-full uppercase tracking-wide">
             {supabase ? "🟢 Live Supabase" : "🟡 Mock Mode"}
           </span>
+          <button 
+            className="text-xs font-bold text-orange-600 bg-orange-50 px-3 py-1 rounded-lg border border-orange-200 hover:bg-orange-100 transition-colors"
+            onClick={() => window.location.reload()}
+          >
+            FORCE REFRESH CACHE
+          </button>
           <button className="text-sm font-medium text-red-500 hover:text-red-700" onClick={() => setIsAuthenticated(false)}>Logout</button>
         </div>
       </header>
@@ -253,12 +259,13 @@ export default function AdminDashboard() {
                 <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} /> Refresh
               </button>
               <button 
-                className="bg-[#0D9488] hover:bg-teal-700 text-white gap-2 px-6 py-2.5 rounded-xl font-bold flex items-center transition-all shadow-md active:scale-95 hover:shadow-teal-200/50" 
+                className="bg-orange-600 hover:bg-orange-700 text-white gap-2 px-6 py-2.5 rounded-xl font-bold flex items-center transition-all shadow-md active:scale-95 shadow-orange-200/50" 
                 onClick={() => {
+                  window.alert("VERSION 3.0.0 ORANGE DETECTED - OPENING...");
                   setShowModal(true);
                 }}
               >
-                <Plus className="w-5 h-5" /> Add Patient
+                <Plus className="w-5 h-5" /> Add Patient (v3.0.0)
               </button>
             </div>
           </div>
