@@ -16,7 +16,7 @@ const itemVariants: Variants = {
 };
 
 const TRUST_BADGES = [
-  { icon: ShieldCheck, color: "text-blue-300", bg: "bg-blue-500/20", title: "NABL Certified", sub: "Quality assured" },
+  { icon: ShieldCheck, color: "text-blue-300", bg: "bg-blue-500/20", title: "Trusted Diagnostics", sub: "Quality assured" },
   { icon: Clock, color: "text-teal-300", bg: "bg-teal-500/20", title: "24/7 Service", sub: "Always available" },
   { icon: Home, color: "text-red-400", bg: "bg-red-500/20", title: "Home Collection", sub: "At your doorstep" },
 ];
