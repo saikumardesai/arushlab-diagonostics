@@ -238,9 +238,15 @@ export default function AdminDashboard() {
               <Button variant="outline" className="gap-2" onClick={fetchBookings}>
                 <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} /> Refresh
               </Button>
-              <Button className="bg-[#0D9488] hover:bg-teal-700 text-white gap-2" onClick={() => setShowModal(true)}>
+              <button 
+                className="bg-[#0D9488] hover:bg-teal-700 text-white gap-2 px-4 py-2 rounded-lg font-medium flex items-center transition-all shadow-sm active:scale-95" 
+                onClick={() => {
+                  console.log("Opening modal...");
+                  setShowModal(true);
+                }}
+              >
                 <Plus className="w-4 h-4" /> Add Patient
-              </Button>
+              </button>
             </div>
           </div>
 
