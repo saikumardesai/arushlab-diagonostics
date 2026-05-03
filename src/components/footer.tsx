@@ -56,8 +56,8 @@ export function Footer() {
       
       <div className="container mx-auto px-4 pt-8 border-t border-white/10 flex flex-col sm:flex-row justify-between items-center gap-4 text-sm text-blue-200">
         <p>&copy; {new Date().getFullYear()} ARUSH Lab &amp; Diagnostics. All rights reserved.</p>
-        <div className="px-3 py-1 bg-white/5 rounded-full text-[10px] uppercase tracking-widest text-blue-300/50 border border-white/5">
-          System Version: v1.0.32
+        <div className="px-3 py-2 bg-red-600 text-white rounded-full text-xs font-bold uppercase tracking-widest animate-pulse border border-red-400">
+          STUCK ON CACHE? VERSION 2.0.0
         </div>
       </div>
     </footer>
