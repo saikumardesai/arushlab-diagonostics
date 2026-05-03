@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { motion, type Variants } from "framer-motion";
 import Link from "next/link";
-import { Phone, ChevronRight, ShieldCheck, Clock, Home } from "lucide-react";
+import { Phone, ChevronRight, ShieldCheck, Clock, Home, FileText } from "lucide-react";
 
 const containerVariants: Variants = {
   hidden: { opacity: 0 },
@@ -110,23 +110,36 @@ export function Hero() {
           {/* CTA Buttons */}
           <motion.div
             variants={itemVariants}
-            className="flex flex-col sm:flex-row items-center gap-4 w-full sm:w-auto mb-16"
+            className="flex flex-col sm:flex-row flex-wrap justify-center items-center gap-4 w-full sm:w-auto mb-16"
           >
+            <Button
+              size="lg"
+              onClick={() => {
+                const msg = `Hello ARUSH Lab & Diagnostics,\nI have a doctor's prescription. Please check the uploaded photo and let me know the pricing and next steps.`;
+                window.open(`https://wa.me/919482724054?text=${encodeURIComponent(msg)}`, '_blank');
+              }}
+              className="w-full sm:w-auto bg-[#25D366] hover:bg-[#20bd5a] text-white rounded-full px-8 py-6 text-base sm:text-lg font-bold group shadow-lg shadow-green-900/40 hover:shadow-green-500/30 hover:scale-105 transition-all flex items-center justify-center gap-2"
+            >
+              <FileText className="w-5 h-5 animate-pulse" />
+              Upload Prescription
+            </Button>
+            
             <Button
               size="lg"
               className="w-full sm:w-auto bg-[#0D9488] hover:bg-teal-600 text-white rounded-full px-8 py-6 text-base sm:text-lg font-semibold group shadow-lg shadow-teal-900/40 hover:shadow-teal-500/30 hover:scale-105 transition-all"
             >
-              <Link href="#pricing" className="flex items-center gap-2">
+              <Link href="#pricing" className="flex items-center justify-center gap-2 w-full">
                 View Test Prices
                 <ChevronRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
               </Link>
             </Button>
+            
             <Button
               size="lg"
               variant="outline"
               className="w-full sm:w-auto bg-white/5 hover:bg-white/15 border border-white/25 text-white backdrop-blur-sm rounded-full px-8 py-6 text-base sm:text-lg font-semibold transition-all hover:scale-105"
             >
-              <a href="tel:9482724054" className="flex items-center gap-2">
+              <a href="tel:9482724054" className="flex items-center justify-center gap-2 w-full">
                 <Phone className="w-5 h-5" /> Call Now
               </a>
             </Button>
