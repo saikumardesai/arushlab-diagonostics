@@ -21,7 +21,7 @@ export default function AdminDashboard() {
 
   // New patient form state
   const [form, setForm] = useState({
-    id: generateId(),
+    id: "",
     patient_name: "",
     test_name: "",
     phlebotomist_name: "",
@@ -34,6 +34,11 @@ export default function AdminDashboard() {
     if (password === "admin123") setIsAuthenticated(true);
     else alert("Incorrect password. Use 'admin123'");
   };
+
+  useEffect(() => {
+    // Generate ID only on client to avoid hydration mismatch
+    setForm(f => ({ ...f, id: generateId() }));
+  }, []);
 
   const fetchBookings = useCallback(async () => {
     setLoading(true);
@@ -120,9 +125,9 @@ export default function AdminDashboard() {
                 placeholder="Enter password..."
               />
             </div>
-            <Button type="submit" className="w-full bg-[#1E3A8A] hover:bg-blue-800 text-white py-6 rounded-xl text-lg">
+            <button type="submit" className="w-full bg-[#1E3A8A] hover:bg-blue-800 text-white py-4 rounded-xl text-lg font-bold transition-all active:scale-95 shadow-lg">
               Login to Dashboard
-            </Button>
+            </button>
           </div>
         </form>
       </div>
@@ -196,10 +201,10 @@ export default function AdminDashboard() {
                 </select>
               </div>
               <div className="flex gap-3 pt-2">
-                <Button type="button" variant="outline" onClick={() => setShowModal(false)} className="flex-1 py-5">Cancel</Button>
-                <Button type="submit" disabled={saving} className="flex-1 bg-[#0D9488] hover:bg-teal-700 text-white py-5">
-                  {saving ? "Saving..." : "Add Patient & Generate Link"}
-                </Button>
+                <button type="button" onClick={() => setShowModal(false)} className="flex-1 py-3 px-4 border rounded-xl hover:bg-slate-50 font-medium transition-colors">Cancel</button>
+                <button type="submit" disabled={saving} className="flex-1 bg-[#0D9488] hover:bg-teal-700 text-white py-3 px-4 rounded-xl font-bold transition-all active:scale-95">
+                  {saving ? "Saving..." : "Add Patient"}
+                </button>
               </div>
             </form>
           </div>
@@ -235,9 +240,9 @@ export default function AdminDashboard() {
                   className="pl-9 pr-4 py-2 border rounded-lg text-sm outline-none focus:ring-2 focus:ring-blue-500 w-56"
                 />
               </div>
-              <Button variant="outline" className="gap-2" onClick={fetchBookings}>
+              <button className="gap-2 px-3 py-2 border rounded-lg hover:bg-slate-50 flex items-center text-sm font-medium transition-colors" onClick={fetchBookings}>
                 <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} /> Refresh
-              </Button>
+              </button>
               <button 
                 className="bg-[#0D9488] hover:bg-teal-700 text-white gap-2 px-4 py-2 rounded-lg font-medium flex items-center transition-all shadow-sm active:scale-95" 
                 onClick={() => {
