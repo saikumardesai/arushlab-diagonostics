@@ -39,7 +39,7 @@ export function Hero() {
       </div>
 
       {/* Content */}
-      <div className="relative z-10 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-12 pb-24 sm:pt-16 sm:pb-32 -mt-12 sm:-mt-20">
+      <div className="relative z-10 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-24 -mt-4 sm:-mt-10">
         <motion.div
           className="flex flex-col items-center text-center max-w-4xl mx-auto"
           variants={containerVariants}
