@@ -142,18 +142,27 @@ export default function AdminDashboard() {
   );
 
   return (
-    <div className="min-h-screen bg-slate-50">
-      {/* Add Patient Modal */}
+    <div className="min-h-screen bg-slate-50 relative">
+      {/* Add Patient Modal - MOVED TO TOP LEVEL */}
       {showModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
-          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-lg border border-slate-100">
-            <div className="flex items-center justify-between p-6 border-b border-slate-100">
-              <h2 className="text-lg font-bold text-slate-800 flex items-center gap-2"><Plus className="w-5 h-5 text-teal-600" /> Add New Patient</h2>
-              <button onClick={() => setShowModal(false)} className="text-slate-400 hover:text-slate-600 p-1 rounded-lg hover:bg-slate-100">
-                <X className="w-5 h-5" />
+        <div 
+          className="fixed inset-0 bg-black/70 backdrop-blur-md flex items-center justify-center p-4" 
+          style={{ zIndex: 9999 }}
+        >
+          <div className="bg-white rounded-3xl shadow-2xl w-full max-w-lg border border-slate-200 overflow-hidden animate-in fade-in zoom-in duration-200">
+            <div className="flex items-center justify-between p-6 border-b border-slate-100 bg-slate-50/50">
+              <h2 className="text-xl font-bold text-slate-800 flex items-center gap-2">
+                <Plus className="w-6 h-6 text-teal-600" /> 
+                Add New Patient
+              </h2>
+              <button 
+                onClick={() => setShowModal(false)} 
+                className="text-slate-400 hover:text-slate-600 p-2 rounded-xl hover:bg-slate-200 transition-colors"
+              >
+                <X className="w-6 h-6" />
               </button>
             </div>
-            <form onSubmit={handleAddPatient} className="p-6 space-y-4">
+            <form onSubmit={handleAddPatient} className="p-8 space-y-5">
               <div className="bg-slate-50 rounded-xl px-4 py-3 border border-slate-200">
                 <p className="text-xs text-slate-500 font-medium uppercase tracking-wide">Auto-Generated Booking ID</p>
                 <p className="font-mono font-bold text-[#1E3A8A] text-lg">{form.id}</p>
@@ -244,13 +253,13 @@ export default function AdminDashboard() {
                 <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} /> Refresh
               </button>
               <button 
-                className="bg-[#0D9488] hover:bg-teal-700 text-white gap-2 px-4 py-2 rounded-lg font-medium flex items-center transition-all shadow-sm active:scale-95" 
+                className="bg-[#0D9488] hover:bg-teal-700 text-white gap-2 px-6 py-2.5 rounded-xl font-bold flex items-center transition-all shadow-md active:scale-95 hover:shadow-teal-200/50" 
                 onClick={() => {
-                  console.log("Opening modal...");
+                  window.alert("DEBUG: Add Patient Button Clicked!");
                   setShowModal(true);
                 }}
               >
-                <Plus className="w-4 h-4" /> Add Patient
+                <Plus className="w-5 h-5" /> Add Patient
               </button>
             </div>
           </div>
