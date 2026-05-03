@@ -31,7 +31,14 @@ const PRICING_DATA = [
   { name: "Lipid Profile", price: 400 },
 ];
 
-import { motion, type Variants } from "framer-motion";
+import { motion, AnimatePresence, type Variants } from "framer-motion";
+import { supabase, BookingStatus, BookingRecord } from "@/lib/supabase";
+import { CheckCircle2, ChevronRight, X as XIcon, MapPin, Phone, User, Info } from "lucide-react";
+
+function generateId() {
+  const num = Math.floor(1000 + Math.random() * 9000);
+  return `ARUSH-${num}`;
+}
 
 const containerVariants: Variants = {
   hidden: { opacity: 0, y: 30 },
@@ -45,7 +52,18 @@ const containerVariants: Variants = {
 export function Pricing() {
   const [searchTerm, setSearchTerm] = useState("");
   const [isGenerating, setIsGenerating] = useState(false);
-  // tableRef no longer needed for manual PDF generation
+  
+  // Booking Modal State
+  const [bookingTest, setBookingTest] = useState<{name: string, price: number} | null>(null);
+  const [bookingStep, setBookingStep] = useState<'form' | 'success'>('form');
+  const [loading, setLoading] = useState(false);
+  const [newBookingId, setNewBookingId] = useState("");
+  
+  const [form, setForm] = useState({
+    name: "",
+    phone: "",
+    address: ""
+  });
 
   const filteredData = PRICING_DATA.filter((test) =>
     test.name.toLowerCase().includes(searchTerm.toLowerCase())
@@ -53,21 +71,18 @@ export function Pricing() {
 
   const handleDownloadPDF = async () => {
     setIsGenerating(true);
-
     try {
       window.alert("Generating Test Price List PDF...");
-      console.log("Starting ARUSH PDF Generation (Manual Mode)...");
       const doc = new jsPDF("p", "pt", "a4");
       const margin = 40;
       let yPos = 50;
 
-      // Header
-      doc.setTextColor(239, 68, 68); // Brand Red
+      doc.setTextColor(239, 68, 68);
       doc.setFontSize(28);
       doc.setFont("helvetica", "bold");
       doc.text("ARUSH", margin, yPos);
       
-      doc.setTextColor(30, 58, 138); // Brand Navy
+      doc.setTextColor(30, 58, 138);
       doc.setFontSize(20);
       doc.text("Lab & Diagnostics", margin + 105, yPos);
       
@@ -95,7 +110,6 @@ export function Pricing() {
       doc.text(`Generated on: ${new Date().toLocaleDateString()}`, 450, yPos);
 
       yPos += 30;
-      // Table Header
       doc.setFillColor(248, 250, 252);
       doc.rect(margin, yPos, 515, 30, "F");
       
@@ -114,14 +128,11 @@ export function Pricing() {
           doc.addPage();
           yPos = 50;
         }
-        
         doc.text(test.name, margin + 10, yPos);
         doc.text(`Rs. ${test.price}/-`, 480, yPos);
-        
         doc.setDrawColor(241, 245, 249);
         doc.setLineWidth(1);
         doc.line(margin, yPos + 8, 555, yPos + 8);
-        
         yPos += 25;
       });
 
@@ -133,13 +144,164 @@ export function Pricing() {
     }
   };
 
-  const bookOnWhatsApp = (testName: string) => {
-    const text = encodeURIComponent(`Hello ARUSH Lab & Diagnostics,\nI would like to book a test. Here are my details:\n\nPatient Name: \nTest Name: *${testName}*\nHome Address / Location Link: \n\nPlease confirm the pricing and appointment slot.`);
-    window.open(`https://wa.me/919482724054?text=${text}`, "_blank");
+  const handleBookingSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!bookingTest) return;
+    
+    setLoading(true);
+    const bookingId = generateId();
+    const newRecord: BookingRecord = {
+      id: bookingId,
+      patient_name: form.name,
+      test_name: bookingTest.name,
+      phone: form.phone,
+      address: form.address,
+      date: new Date().toISOString(),
+      status: 'Booking Confirmed'
+    };
+
+    if (supabase) {
+      const { error } = await supabase.from('bookings').insert([newRecord]);
+      if (error) {
+        alert("Booking failed: " + error.message);
+        setLoading(false);
+        return;
+      }
+    } else {
+      // Mock logic
+      const localData = localStorage.getItem('arush_mock_bookings');
+      const db = localData ? JSON.parse(localData) : [];
+      localStorage.setItem('arush_mock_bookings', JSON.stringify([newRecord, ...db]));
+    }
+
+    setNewBookingId(bookingId);
+    setBookingStep('success');
+    setLoading(false);
+  };
+
+  const resetBooking = () => {
+    setBookingTest(null);
+    setBookingStep('form');
+    setForm({ name: "", phone: "", address: "" });
   };
 
   return (
-    <section id="pricing" className="py-24 bg-slate-50 border-t border-slate-200 overflow-hidden">
+    <section id="pricing" className="py-24 bg-slate-50 border-t border-slate-200 overflow-hidden relative">
+      {/* Booking Modal */}
+      <AnimatePresence>
+        {bookingTest && (
+          <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+            <motion.div 
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={resetBooking}
+              className="absolute inset-0 bg-slate-900/60 backdrop-blur-md"
+            />
+            
+            <motion.div 
+              initial={{ scale: 0.9, opacity: 0, y: 20 }}
+              animate={{ scale: 1, opacity: 1, y: 0 }}
+              exit={{ scale: 0.9, opacity: 0, y: 20 }}
+              className="bg-white rounded-[2.5rem] shadow-2xl w-full max-w-lg overflow-hidden relative z-10 border border-slate-200"
+            >
+              {bookingStep === 'form' ? (
+                <>
+                  <div className="bg-[#1E3A8A] p-8 text-white relative">
+                    <button onClick={resetBooking} className="absolute right-6 top-6 p-2 hover:bg-white/10 rounded-full transition-colors">
+                      <XIcon className="w-6 h-6" />
+                    </button>
+                    <div className="flex items-center gap-3 mb-2">
+                      <div className="bg-white/10 p-2 rounded-xl backdrop-blur-sm">
+                        <Info className="w-5 h-5 text-blue-200" />
+                      </div>
+                      <span className="text-blue-200 font-bold uppercase tracking-widest text-xs">Confirm Booking</span>
+                    </div>
+                    <h2 className="text-2xl font-black">{bookingTest.name}</h2>
+                    <p className="text-blue-100/80 font-medium text-sm mt-1">Diagnostic Test Package • ₹{bookingTest.price}</p>
+                  </div>
+                  
+                  <form onSubmit={handleBookingSubmit} className="p-8 space-y-5">
+                    <div className="space-y-4">
+                      <div className="relative">
+                        <User className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
+                        <Input 
+                          placeholder="Your Full Name"
+                          required
+                          value={form.name}
+                          onChange={e => setForm(f => ({...f, name: e.target.value}))}
+                          className="pl-12 h-14 bg-slate-50 border-transparent focus:bg-white focus:ring-2 focus:ring-blue-600 rounded-2xl transition-all"
+                        />
+                      </div>
+                      <div className="relative">
+                        <Phone className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
+                        <Input 
+                          placeholder="Phone Number"
+                          type="tel"
+                          required
+                          value={form.phone}
+                          onChange={e => setForm(f => ({...f, phone: e.target.value}))}
+                          className="pl-12 h-14 bg-slate-50 border-transparent focus:bg-white focus:ring-2 focus:ring-blue-600 rounded-2xl transition-all"
+                        />
+                      </div>
+                      <div className="relative">
+                        <MapPin className="absolute left-4 top-4 w-5 h-5 text-slate-400" />
+                        <textarea 
+                          placeholder="Home Address / Collection Location"
+                          required
+                          value={form.address}
+                          onChange={e => setForm(f => ({...f, address: e.target.value}))}
+                          className="w-full pl-12 pt-4 min-h-[100px] bg-slate-50 border-transparent focus:bg-white focus:ring-2 focus:ring-blue-600 rounded-2xl outline-none transition-all text-sm"
+                        />
+                      </div>
+                    </div>
+                    
+                    <Button 
+                      type="submit" 
+                      disabled={loading}
+                      className="w-full h-16 bg-[#0D9488] hover:bg-teal-700 text-white rounded-2xl font-black text-lg transition-all active:scale-[0.98] shadow-lg shadow-teal-200"
+                    >
+                      {loading ? "Processing..." : "Confirm & Book Test"}
+                    </Button>
+                    <p className="text-center text-slate-400 text-xs font-medium">
+                      By clicking, you agree to our terms of service
+                    </p>
+                  </form>
+                </>
+              ) : (
+                <div className="p-10 text-center">
+                  <div className="w-24 h-24 bg-green-50 text-green-600 rounded-[2.5rem] flex items-center justify-center mx-auto mb-6 transform rotate-12">
+                    <CheckCircle2 className="w-12 h-12" />
+                  </div>
+                  <h2 className="text-3xl font-black text-slate-900 mb-2">Booking Success!</h2>
+                  <p className="text-slate-500 font-medium mb-8">Your test has been scheduled. Use the ID below to track the status.</p>
+                  
+                  <div className="bg-slate-50 rounded-3xl p-6 border-2 border-dashed border-slate-200 mb-8">
+                    <p className="text-xs text-slate-400 font-bold uppercase tracking-widest mb-1">Your Tracking ID</p>
+                    <p className="text-4xl font-black text-[#1E3A8A] tracking-tighter">{newBookingId}</p>
+                  </div>
+                  
+                  <div className="space-y-3">
+                    <Button 
+                      onClick={() => window.location.href = `/track?id=${newBookingId}`}
+                      className="w-full h-14 bg-[#1E3A8A] hover:bg-blue-800 text-white rounded-2xl font-bold flex items-center justify-center gap-2 transition-all active:scale-95 shadow-xl shadow-blue-100"
+                    >
+                      Track My Test <ChevronRight className="w-5 h-5" />
+                    </Button>
+                    <button 
+                      onClick={resetBooking}
+                      className="w-full py-4 text-slate-500 font-bold hover:text-slate-800 transition-colors"
+                    >
+                      Done
+                    </button>
+                  </div>
+                </div>
+              )}
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+
       <div className="container mx-auto px-4 max-w-5xl">
         <motion.div 
           initial={{ opacity: 0, y: 20 }}
@@ -178,7 +340,7 @@ export function Pricing() {
               className="w-full sm:w-auto bg-slate-800 hover:bg-slate-700 text-white rounded-full px-6 transition-all"
             >
               <Download className="w-4 h-4 mr-2" />
-              {isGenerating ? "Generating..." : "Download as PDF"}
+              {isGenerating ? "Generating List..." : "Download Price PDF"}
             </Button>
           </div>
 
@@ -186,10 +348,10 @@ export function Pricing() {
             <Table>
               <TableHeader>
                 <TableRow className="hover:bg-transparent border-b-2 border-slate-100">
-                  <TableHead className="text-brand-primary font-semibold text-base py-4 text-left">Test Name</TableHead>
-                  <TableHead className="text-brand-primary font-semibold text-base py-4 w-32 text-left">Price</TableHead>
-                  <TableHead className="text-brand-primary font-semibold text-base py-4 text-center w-32 action-col">Status</TableHead>
-                  <TableHead className="text-brand-primary font-semibold text-base py-4 text-right w-40 action-col">Action</TableHead>
+                  <TableHead className="text-brand-primary font-bold text-base py-4 text-left">Test Name</TableHead>
+                  <TableHead className="text-brand-primary font-bold text-base py-4 w-24 sm:w-32 text-left">Price</TableHead>
+                  <TableHead className="text-brand-primary font-bold text-base py-4 text-center w-32 action-col hidden sm:table-cell">Status</TableHead>
+                  <TableHead className="text-brand-primary font-bold text-base py-4 text-right w-32 sm:w-40 action-col">Easy Booking</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -202,11 +364,11 @@ export function Pricing() {
                 ) : (
                   filteredData.map((test, index) => (
                     <TableRow key={index} className="hover:bg-blue-50/50 transition-colors border-b border-slate-50">
-                      <TableCell className="font-medium text-slate-800 text-base py-4 align-middle text-left">{test.name}</TableCell>
-                      <TableCell className="font-bold text-slate-900 text-base align-middle text-left">₹{test.price}</TableCell>
-                      <TableCell className="text-center action-col align-middle">
+                      <TableCell className="font-semibold text-slate-800 text-sm sm:text-base py-4 align-middle text-left">{test.name}</TableCell>
+                      <TableCell className="font-bold text-slate-900 text-sm sm:text-base align-middle text-left">₹{test.price}</TableCell>
+                      <TableCell className="text-center action-col align-middle hidden sm:table-cell">
                         {test.price <= 100 && (
-                          <Badge className="bg-green-100 text-green-700 hover:bg-green-200 border-none font-medium px-2.5 py-0.5 rounded-full inline-flex tracking-tight">
+                          <Badge className="bg-emerald-100 text-emerald-700 hover:bg-emerald-200 border-none font-bold px-3 py-1 rounded-full inline-flex tracking-tight text-[10px]">
                             Best Value
                           </Badge>
                         )}
@@ -214,11 +376,10 @@ export function Pricing() {
                       <TableCell className="text-right action-col align-middle">
                         <Button 
                           size="sm" 
-                          onClick={() => bookOnWhatsApp(test.name)}
-                          className="bg-white border border-slate-200 hover:bg-brand-whatsapp hover:text-white hover:border-transparent text-slate-700 transition-all shadow-sm rounded-full"
+                          onClick={() => setBookingTest(test)}
+                          className="bg-[#1E3A8A] hover:bg-blue-800 text-white transition-all shadow-md active:scale-95 rounded-full px-4 sm:px-6 font-bold text-xs sm:text-sm"
                         >
-                          <MessageCircle className="w-4 h-4 mr-2" />
-                          Book
+                          Book <span className="hidden sm:inline ml-1">Now</span>
                         </Button>
                       </TableCell>
                     </TableRow>

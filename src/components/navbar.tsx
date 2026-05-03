@@ -54,7 +54,7 @@ export function Navbar() {
 
           {/* Desktop CTA */}
           <div className="hidden md:flex items-center gap-2">
-            <Link href="/track?id=ARUSH-4201" className="text-sm font-bold text-blue-600 hover:text-blue-800 transition-colors bg-blue-50 px-3 py-1.5 rounded-lg border border-blue-100 flex items-center gap-1 mr-2">
+            <Link href="/track" className="text-sm font-bold text-blue-600 hover:text-blue-800 transition-colors bg-blue-50 px-3 py-1.5 rounded-lg border border-blue-100 flex items-center gap-1 mr-2">
               <ClipboardList className="w-4 h-4" /> Track Test
             </Link>
             <a href="tel:+919482724054" className="flex items-center gap-1.5 text-sm font-medium text-slate-600 hover:text-[#1E3A8A] transition-colors">
@@ -98,7 +98,7 @@ export function Navbar() {
                 </Link>
               ))}
               <Link
-                  href="/track?id=ARUSH-4201"
+                  href="/track"
                   className="block px-4 py-3 text-base font-bold text-blue-600 rounded-xl hover:bg-blue-50 transition-colors bg-blue-50/50"
                   onClick={() => setMobileOpen(false)}
                 >

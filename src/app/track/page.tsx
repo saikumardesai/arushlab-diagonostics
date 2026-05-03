@@ -1,9 +1,9 @@
 "use client";
 
-import { useEffect, useState, Suspense } from "react";
+import { useEffect, useState, Suspense, useCallback } from "react";
 import { useSearchParams } from "next/navigation";
 import { supabase, DEMO_BOOKING_DB, BookingRecord, BookingStatus } from "@/lib/supabase";
-import { CheckCircle2, Circle, Clock, Phone, Beaker, MapPin, RefreshCw } from "lucide-react";
+import { CheckCircle2, Circle, Clock, Phone, Beaker, MapPin, RefreshCw, ClipboardList } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 
@@ -18,48 +18,99 @@ const TIMELINE_STEPS: BookingStatus[] = [
 function TrackContent() {
   const searchParams = useSearchParams();
   const id = searchParams.get('id');
+  const [searchInput, setSearchInput] = useState("");
 
   const [booking, setBooking] = useState<BookingRecord | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
+  const [errorVisible, setErrorVisible] = useState(false);
+
+  const fetchBooking = useCallback(async (trackingId: string) => {
+    if (!trackingId) return;
+    setLoading(true);
+    if (supabase) {
+      const { data } = await supabase.from('bookings').select('*').eq('id', trackingId).single();
+      if (data) {
+        setBooking(data as BookingRecord);
+        setErrorVisible(false);
+      } else {
+        setBooking(null);
+        setErrorVisible(true);
+      }
+    } else {
+      const localData = localStorage.getItem('arush_mock_bookings');
+      const db = localData ? JSON.parse(localData) as BookingRecord[] : DEMO_BOOKING_DB;
+      const record = db.find(b => b.id === trackingId);
+      if (record) {
+        setBooking(record);
+        setErrorVisible(false);
+      } else {
+        setBooking(null);
+        setErrorVisible(true);
+      }
+    }
+    setLoading(false);
+  }, []);
 
   useEffect(() => {
-    if (!id) return;
-    
-    const fetchBooking = async () => {
-      if (supabase) {
-        const { data } = await supabase.from('bookings').select('*').eq('id', id).single();
-        if (data) setBooking(data as BookingRecord);
-      } else {
-        // Look in localStorage first, then static mock
-        const localData = localStorage.getItem('arush_mock_bookings');
-        const db = localData ? JSON.parse(localData) as BookingRecord[] : DEMO_BOOKING_DB;
-        const record = db.find(b => b.id === id);
-        if (record) setBooking(record);
-      }
-      setLoading(false);
-    };
+    if (id) {
+      void fetchBooking(id);
+      const interval = setInterval(() => void fetchBooking(id), 5000);
+      return () => clearInterval(interval);
+    }
+  }, [id, fetchBooking]);
 
-    fetchBooking();
-    
-    // In a real app, we'd setup Supabase Realtime here
-    const interval = setInterval(fetchBooking, 5000); // Poll every 5s for the demo
-    return () => clearInterval(interval);
-  }, [id]);
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (searchInput.trim()) {
+      window.location.href = `/track?id=${searchInput.trim()}`;
+    }
+  };
 
-  if (loading) {
+  if (loading && !booking) {
     return <div className="min-h-screen flex items-center justify-center bg-slate-50"><div className="animate-spin text-blue-600"><RefreshCw className="w-8 h-8" /></div></div>;
   }
 
-  if (!booking) {
+  if (!id || (!booking && !loading)) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center bg-slate-50 text-center px-4">
-        <Beaker className="w-16 h-16 text-slate-300 mb-4" />
-        <h1 className="text-2xl font-bold text-slate-800">Booking Not Found</h1>
-        <p className="text-slate-500 mt-2 max-w-sm">We couldn&apos;t find a tracking record for ID: {id}. Please check your WhatsApp link.</p>
-        <Link href="/" className="mt-8 text-blue-600 font-medium hover:underline">Return to Home</Link>
+        <div className="bg-white p-10 rounded-[2.5rem] shadow-xl border border-slate-100 w-full max-w-md">
+          <div className="bg-blue-50 w-20 h-20 rounded-3xl flex items-center justify-center mx-auto mb-6 text-blue-600">
+            <Beaker className="w-10 h-10" />
+          </div>
+          <h1 className="text-2xl font-black text-slate-800 mb-2">Track Your Test</h1>
+          <p className="text-slate-500 mb-8 font-medium">Enter your ARUSH Tracking ID below to see live updates.</p>
+          
+          <form onSubmit={handleSearch} className="space-y-4">
+            <div className="relative">
+              <ClipboardList className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
+              <input 
+                type="text" 
+                placeholder="e.g. ARUSH-1234"
+                value={searchInput}
+                onChange={e => setSearchInput(e.target.value)}
+                className="w-full pl-12 pr-4 py-4 bg-slate-50 border-2 border-transparent focus:border-blue-500 focus:bg-white rounded-2xl outline-none transition-all font-bold text-slate-700"
+              />
+            </div>
+            <Button type="submit" className="w-full py-7 bg-[#1E3A8A] hover:bg-blue-800 text-white rounded-2xl font-bold text-lg shadow-lg shadow-blue-100 transition-all active:scale-95">
+              Track Status
+            </Button>
+          </form>
+
+          {errorVisible && id && (
+            <p className="mt-4 text-red-500 font-bold text-sm bg-red-50 p-3 rounded-xl border border-red-100 animate-shake">
+              Record not found for {id}
+            </p>
+          )}
+
+          <Link href="/" className="mt-8 block text-slate-400 font-bold hover:text-slate-600 text-sm transition-colors">
+            ← Back to Home
+          </Link>
+        </div>
       </div>
     );
   }
+
+  if (!booking) return null;
 
   const currentStepIndex = TIMELINE_STEPS.indexOf(booking.status);
 
