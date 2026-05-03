@@ -1,4 +1,3 @@
-/* eslint-disable */
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
@@ -54,12 +53,12 @@ export default function AdminDashboard() {
     setLoading(false);
   }, []);
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
     if (isAuthenticated) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       void fetchBookings();
     }
-  }, [isAuthenticated]);
+  }, [isAuthenticated, fetchBookings]);
 
   const handleUpdateStatus = async (id: string, newStatus: BookingStatus) => {
     // Optimistic UI update
@@ -67,12 +66,16 @@ export default function AdminDashboard() {
     if (supabase) {
       await supabase.from('bookings').update({ status: newStatus }).eq('id', id);
     } else {
-      const updated = bookings.map(b => b.id === id ? { ...b, status: newStatus } : b);
-      localStorage.setItem('arush_mock_bookings', JSON.stringify(updated));
+      const localData = localStorage.getItem('arush_mock_bookings');
+      if (localData) {
+        const db = JSON.parse(localData) as BookingRecord[];
+        const updated = db.map(b => b.id === id ? { ...b, status: newStatus } : b);
+        localStorage.setItem('arush_mock_bookings', JSON.stringify(updated));
+      }
     }
   };
 
-  const handleDelete = async (id: string, name: string) => {
+  const handleDelete = (id: string, name: string) => {
     setDeleteConfirm({ id, name });
   };
 
@@ -132,7 +135,7 @@ export default function AdminDashboard() {
 
   const copyTrackingLink = (id: string) => {
     const link = `${window.location.origin}/track?id=${id}`;
-    navigator.clipboard.writeText(link);
+    void navigator.clipboard.writeText(link);
     setCopiedId(id);
     setTimeout(() => setCopiedId(null), 2000);
   };
@@ -174,7 +177,6 @@ export default function AdminDashboard() {
 
   return (
     <div className="min-h-screen bg-slate-50 relative">
-      {/* Add Patient Modal */}
       <AnimatePresence>
         {showModal && (
           <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4">
@@ -255,7 +257,6 @@ export default function AdminDashboard() {
         )}
       </AnimatePresence>
 
-      {/* Delete Confirmation Modal */}
       <AnimatePresence>
         {deleteConfirm && (
           <div className="fixed inset-0 z-[10000] flex items-center justify-center p-4">
@@ -301,8 +302,6 @@ export default function AdminDashboard() {
         )}
       </AnimatePresence>
 
-
-      {/* Admin Nav */}
       <header className="bg-white border-b border-slate-200 px-6 py-4 flex items-center justify-between">
         <div className="flex items-center gap-2 text-[#1E3A8A]">
           <Beaker className="w-6 h-6" />
@@ -331,14 +330,12 @@ export default function AdminDashboard() {
                   className="pl-9 pr-4 py-2 border rounded-lg text-sm outline-none focus:ring-2 focus:ring-blue-500 w-56"
                 />
               </div>
-              <button className="gap-2 px-3 py-2 border rounded-lg hover:bg-slate-50 flex items-center text-sm font-medium transition-colors" onClick={fetchBookings}>
+              <button className="gap-2 px-3 py-2 border rounded-lg hover:bg-slate-50 flex items-center text-sm font-medium transition-colors" onClick={() => void fetchBookings()}>
                 <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} /> Refresh
               </button>
               <button 
                 className="bg-[#0D9488] hover:bg-teal-700 text-white gap-2 px-6 py-2.5 rounded-xl font-bold flex items-center transition-all shadow-md active:scale-95 hover:shadow-teal-200/50" 
-                onClick={() => {
-                  setShowModal(true);
-                }}
+                onClick={() => setShowModal(true)}
               >
                 <Plus className="w-5 h-5" /> Add Patient
               </button>
@@ -359,49 +356,49 @@ export default function AdminDashboard() {
               <table className="w-full text-left text-sm whitespace-nowrap">
                 <thead className="bg-slate-50 text-slate-600 font-medium">
                   <tr>
-                    <th className="px-6 py-4">Booking ID</th>
-                    <th className="px-6 py-4">Patient Name</th>
-                    <th className="px-6 py-4">Test Type</th>
-                    <th className="px-6 py-4">Date</th>
-                    <th className="px-6 py-4">Current Status</th>
-                    <th className="px-6 py-4">Assigned To</th>
-                    <th className="px-6 py-4 text-center">Tracking Link</th>
-                    <th className="px-6 py-4 text-center">Actions</th>
+                    <th className="px-6 py-4 font-bold text-[#1E3A8A]">Patient Details</th>
+                    <th className="px-6 py-4 font-bold text-[#1E3A8A]">Test Details</th>
+                    <th className="px-6 py-4 font-bold text-[#1E3A8A]">Status Control</th>
+                    <th className="px-6 py-4 font-bold text-[#1E3A8A] text-center">Actions</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-100 text-slate-800">
                   {filtered.map(row => (
                     <tr key={row.id} className="hover:bg-slate-50/50 transition-colors">
-                      <td className="px-6 py-4 font-mono text-slate-500 text-xs">{row.id}</td>
-                      <td className="px-6 py-4 font-semibold">{row.patient_name}</td>
-                      <td className="px-6 py-4 text-slate-600">{row.test_name}</td>
-                      <td className="px-6 py-4 text-slate-500">{new Date(row.date).toLocaleDateString()}</td>
+                      <td className="px-6 py-4">
+                        <div className="font-black text-slate-900">{row.patient_name}</div>
+                        <div className="text-[10px] font-mono text-slate-400 mt-0.5">{row.id}</div>
+                      </td>
+                      <td className="px-6 py-4">
+                        <div className="font-bold text-[#0D9488]">{row.test_name}</div>
+                        <div className="text-[11px] text-slate-400">{new Date(row.date).toLocaleDateString()}</div>
+                      </td>
                       <td className="px-6 py-4">
                         <select
                           value={row.status}
-                          onChange={(e) => handleUpdateStatus(row.id, e.target.value as BookingStatus)}
-                          className="bg-white border rounded-lg px-3 py-1.5 focus:ring-2 focus:ring-blue-500 outline-none text-sm font-medium shadow-sm min-w-[190px]"
+                          onChange={(e) => void handleUpdateStatus(row.id, e.target.value as BookingStatus)}
+                          className="bg-white border-2 border-slate-100 rounded-xl px-4 py-2 focus:border-blue-500 outline-none text-sm font-bold shadow-sm"
                         >
                           {statuses.map(s => <option key={s} value={s}>{s}</option>)}
                         </select>
                       </td>
-                      <td className="px-6 py-4 text-slate-600">{row.phlebotomist_name || "Unassigned"}</td>
-                      <td className="px-6 py-4 text-center">
-                        <button
-                          onClick={() => copyTrackingLink(row.id)}
-                          className="flex items-center gap-1.5 mx-auto text-blue-600 hover:text-blue-800 font-medium text-sm"
-                        >
-                          {copiedId === row.id ? <><Check className="w-4 h-4 text-green-600" /> Copied!</> : <><Copy className="w-4 h-4" /> Copy Link</>}
-                        </button>
-                      </td>
-                      <td className="px-6 py-4 text-center">
-                        <button
-                          onClick={() => handleDelete(row.id, row.patient_name)}
-                          className="p-2 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-all active:scale-90"
-                          title="Delete Patient"
-                        >
-                          <Trash2 className="w-4 h-4" />
-                        </button>
+                      <td className="px-6 py-4">
+                        <div className="flex items-center justify-center gap-4">
+                          <button
+                            onClick={() => copyTrackingLink(row.id)}
+                            className="p-2 text-blue-600 hover:bg-blue-50 rounded-xl transition-all"
+                            title="Copy Track Link"
+                          >
+                            {copiedId === row.id ? <Check className="w-5 h-5 text-green-600" /> : <Copy className="w-5 h-5" />}
+                          </button>
+                          <button
+                            onClick={() => handleDelete(row.id, row.patient_name)}
+                            className="p-2 text-red-400 hover:text-red-700 hover:bg-red-50 rounded-xl transition-all"
+                            title="Delete Patient"
+                          >
+                            <Trash2 className="w-5 h-5" />
+                          </button>
+                        </div>
                       </td>
                     </tr>
                   ))}
@@ -414,3 +411,4 @@ export default function AdminDashboard() {
     </div>
   );
 }
+

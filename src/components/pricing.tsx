@@ -109,7 +109,7 @@ export function Pricing() {
       doc.setFont("helvetica", "normal");
       doc.setTextColor(51, 65, 85);
       
-      filteredData.forEach((test, index) => {
+      filteredData.forEach((test) => {
         if (yPos > 780) {
           doc.addPage();
           yPos = 50;
