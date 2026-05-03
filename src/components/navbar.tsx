@@ -4,7 +4,7 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { motion, AnimatePresence } from "framer-motion";
 import { useState, useEffect } from "react";
-import { Menu, X, Phone } from "lucide-react";
+import { Menu, X, Phone, ClipboardList } from "lucide-react";
 
 const NAV_LINKS = [
   { label: "Home", href: "/" },
@@ -54,6 +54,9 @@ export function Navbar() {
 
           {/* Desktop CTA */}
           <div className="hidden md:flex items-center gap-2">
+            <Link href="/track?id=ARUSH-4201" className="text-sm font-bold text-blue-600 hover:text-blue-800 transition-colors bg-blue-50 px-3 py-1.5 rounded-lg border border-blue-100 flex items-center gap-1 mr-2">
+              <ClipboardList className="w-4 h-4" /> Track Test
+            </Link>
             <a href="tel:+919482724054" className="flex items-center gap-1.5 text-sm font-medium text-slate-600 hover:text-[#1E3A8A] transition-colors">
               <Phone className="w-4 h-4" /> 9482724054
             </a>
@@ -94,6 +97,16 @@ export function Navbar() {
                   {link.label}
                 </Link>
               ))}
+              <Link
+                  href="/track/ARUSH-4201"
+                  className="block px-4 py-3 text-base font-bold text-blue-600 rounded-xl hover:bg-blue-50 transition-colors bg-blue-50/50"
+                  onClick={() => setMobileOpen(false)}
+                >
+                  <div className="flex items-center gap-2">
+                    <ClipboardList className="w-5 h-5" />
+                    Track Your Test
+                  </div>
+              </Link>
               <hr className="my-2 border-slate-100" />
               <a href="tel:+919482724054" className="flex items-center gap-2 text-base font-semibold text-[#1E3A8A] py-3 px-4 rounded-xl hover:bg-blue-50 transition-colors">
                 <Phone className="w-5 h-5" /> Call: 9482724054
