@@ -17,6 +17,7 @@ export default function AdminDashboard() {
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
   const [showModal, setShowModal] = useState(false);
+  const [deleteConfirm, setDeleteConfirm] = useState<{id: string, name: string} | null>(null);
   const [copiedId, setCopiedId] = useState<string | null>(null);
 
   // New patient form state
@@ -71,12 +72,20 @@ export default function AdminDashboard() {
   };
 
   const handleDelete = async (id: string, name: string) => {
-    if (!confirm(`Are you sure you want to delete patient ${name}?`)) return;
+    setDeleteConfirm({ id, name });
+  };
+
+  const confirmDelete = async () => {
+    if (!deleteConfirm) return;
+    const { id } = deleteConfirm;
+    setSaving(true);
 
     if (supabase) {
       const { error } = await supabase.from('bookings').delete().eq('id', id);
       if (error) {
         alert(`Error deleting: ${error.message}`);
+        setSaving(false);
+        setDeleteConfirm(null);
         return;
       }
     } else {
@@ -89,6 +98,8 @@ export default function AdminDashboard() {
     }
     
     await fetchBookings();
+    setDeleteConfirm(null);
+    setSaving(false);
   };
 
   const handleAddPatient = async (e: React.FormEvent) => {
@@ -235,6 +246,41 @@ export default function AdminDashboard() {
                 </button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+
+      {/* Delete Confirmation Modal */}
+      {deleteConfirm && (
+        <div 
+          className="fixed inset-0 bg-black/70 backdrop-blur-md flex items-center justify-center p-4" 
+          style={{ zIndex: 10000 }}
+        >
+          <div className="bg-white rounded-3xl shadow-2xl w-full max-w-sm border border-slate-200 overflow-hidden animate-in fade-in zoom-in duration-200">
+            <div className="p-8 text-center">
+              <div className="w-16 h-16 bg-red-50 text-red-600 rounded-full flex items-center justify-center mx-auto mb-4">
+                <Trash2 className="w-8 h-8" />
+              </div>
+              <h3 className="text-xl font-bold text-slate-800 mb-2">Are you sure?</h3>
+              <p className="text-slate-500 text-sm mb-8 leading-relaxed">
+                You are about to delete patient <span className="font-bold text-slate-800">{deleteConfirm.name}</span>. This action cannot be undone.
+              </p>
+              <div className="flex gap-3">
+                <button 
+                  onClick={() => setDeleteConfirm(null)} 
+                  className="flex-1 py-3 px-4 border rounded-xl hover:bg-slate-50 font-medium transition-colors"
+                >
+                  Cancel
+                </button>
+                <button 
+                  onClick={confirmDelete} 
+                  disabled={saving}
+                  className="flex-1 bg-red-600 hover:bg-red-700 text-white py-3 px-4 rounded-xl font-bold transition-all active:scale-95 disabled:opacity-50"
+                >
+                  {saving ? "Deleting..." : "Delete Now"}
+                </button>
+              </div>
+            </div>
           </div>
         </div>
       )}
