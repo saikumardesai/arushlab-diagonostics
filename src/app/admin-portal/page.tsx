@@ -259,13 +259,12 @@ export default function AdminDashboard() {
                 <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} /> Refresh
               </button>
               <button 
-                className="bg-orange-600 hover:bg-orange-700 text-white gap-2 px-6 py-2.5 rounded-xl font-bold flex items-center transition-all shadow-md active:scale-95 shadow-orange-200/50" 
+                className="bg-[#0D9488] hover:bg-teal-700 text-white gap-2 px-6 py-2.5 rounded-xl font-bold flex items-center transition-all shadow-md active:scale-95 hover:shadow-teal-200/50" 
                 onClick={() => {
-                  window.alert("VERSION 3.0.0 ORANGE DETECTED - OPENING...");
                   setShowModal(true);
                 }}
               >
-                <Plus className="w-5 h-5" /> Add Patient (v3.0.0)
+                <Plus className="w-5 h-5" /> Add Patient
               </button>
             </div>
           </div>
