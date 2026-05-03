@@ -33,12 +33,9 @@ export function Navbar() {
       }`}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
 
-          {/* Logo */}
-          <Link href="/" className="flex items-center gap-2 group shrink-0" onClick={() => setMobileOpen(false)}>
-            <div className="flex items-center gap-1.5 flex-nowrap shrink-0">
-              <span className="text-xl sm:text-2xl font-bold text-red-600">ARUSH</span>
-              <span className="text-xs sm:text-base font-bold text-[#1E3A8A]">Lab &amp; Diagnostics</span>
-            </div>
+          <Link href="/" className="flex flex-col sm:flex-row sm:items-center sm:gap-1.5 group shrink-0" onClick={() => setMobileOpen(false)}>
+            <span className="text-xl sm:text-2xl font-bold text-red-600 leading-none">ARUSH</span>
+            <span className="text-[11px] sm:text-base font-bold text-[#1E3A8A] leading-none mt-1 sm:mt-0">Lab &amp; Diagnostics</span>
           </Link>
 
           {/* Desktop Nav */}
