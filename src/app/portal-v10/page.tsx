@@ -358,15 +358,16 @@ export default function AdminDashboard() {
                   <tr>
                     <th className="px-6 py-4 font-bold text-[#1E3A8A]">Patient Details</th>
                     <th className="px-6 py-4 font-bold text-[#1E3A8A]">Test Details</th>
-                    <th className="px-6 py-4 font-bold text-[#1E3A8A]">Status Control</th>
-                    <th className="px-6 py-4 font-bold text-[#1E3A8A] text-center">Actions</th>
+                    <th className="px-6 py-4 font-bold text-[#1E3A8A]">Status</th>
+                    <th className="px-6 py-4 font-bold text-[#1E3A8A] text-center">Tracking Link</th>
+                    <th className="px-6 py-4 font-bold text-[#1E3A8A] text-center">Delete</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-100 text-slate-800">
                   {filtered.map(row => (
                     <tr key={row.id} className="hover:bg-slate-50/50 transition-colors">
                       <td className="px-6 py-4">
-                        <div className="font-black text-slate-900">{row.patient_name}</div>
+                        <div className="font-bold text-slate-900">{row.patient_name}</div>
                         <div className="text-[10px] font-mono text-slate-400 mt-0.5">{row.id}</div>
                       </td>
                       <td className="px-6 py-4">
@@ -377,28 +378,27 @@ export default function AdminDashboard() {
                         <select
                           value={row.status}
                           onChange={(e) => void handleUpdateStatus(row.id, e.target.value as BookingStatus)}
-                          className="bg-white border-2 border-slate-100 rounded-xl px-4 py-2 focus:border-blue-500 outline-none text-sm font-bold shadow-sm"
+                          className="bg-white border rounded-xl px-3 py-1.5 focus:border-blue-500 outline-none text-xs font-bold shadow-sm"
                         >
                           {statuses.map(s => <option key={s} value={s}>{s}</option>)}
                         </select>
                       </td>
-                      <td className="px-6 py-4">
-                        <div className="flex items-center justify-center gap-4">
-                          <button
-                            onClick={() => copyTrackingLink(row.id)}
-                            className="p-2 text-blue-600 hover:bg-blue-50 rounded-xl transition-all"
-                            title="Copy Track Link"
-                          >
-                            {copiedId === row.id ? <Check className="w-5 h-5 text-green-600" /> : <Copy className="w-5 h-5" />}
-                          </button>
-                          <button
-                            onClick={() => handleDelete(row.id, row.patient_name)}
-                            className="p-2 text-red-400 hover:text-red-700 hover:bg-red-50 rounded-xl transition-all"
-                            title="Delete Patient"
-                          >
-                            <Trash2 className="w-5 h-5" />
-                          </button>
-                        </div>
+                      <td className="px-6 py-4 text-center">
+                        <button
+                          onClick={() => copyTrackingLink(row.id)}
+                          className="flex items-center gap-1.5 mx-auto bg-blue-50 text-blue-700 px-3 py-1.5 rounded-lg hover:bg-blue-100 font-bold text-[11px] transition-all"
+                        >
+                          {copiedId === row.id ? <><Check className="w-3.5 h-3.5" /> Copied</> : <><Copy className="w-3.5 h-3.5" /> Copy Link</>}
+                        </button>
+                      </td>
+                      <td className="px-6 py-4 text-center">
+                        <button
+                          onClick={() => handleDelete(row.id, row.patient_name)}
+                          className="p-2 text-red-400 hover:text-red-700 hover:bg-red-50 rounded-lg transition-all"
+                          title="Delete Patient"
+                        >
+                          <Trash2 className="w-5 h-5" />
+                        </button>
                       </td>
                     </tr>
                   ))}
