@@ -1,9 +1,18 @@
 "use client";
 
 export function WhatsAppButton() {
+  const message = `Hello ARUSH Lab & Diagnostics,
+I would like to book a lab test. Here are my details:
+
+Patient Name: 
+Test Name(s): 
+Home Address / Location Link: 
+
+Please confirm the pricing and available slots.`;
+
   return (
     <a
-      href="https://wa.me/919482724054?text=Hello%20ARUSH%20Lab%2C%20I%20want%20to%20book%20a%20test"
+      href={`https://wa.me/919482724054?text=${encodeURIComponent(message)}`}
       target="_blank"
       rel="noopener noreferrer"
       className="fixed bottom-6 right-6 z-50 flex h-14 w-14 sm:h-16 sm:w-16 items-center justify-center rounded-full bg-brand-whatsapp text-white shadow-lg shadow-green-500/30 transition-transform hover:scale-110 group cursor-pointer"

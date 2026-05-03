@@ -134,7 +134,7 @@ export function Pricing() {
   };
 
   const bookOnWhatsApp = (testName: string) => {
-    const text = encodeURIComponent(`Hello ARUSH Lab, I want to book the ${testName} test.`);
+    const text = encodeURIComponent(`Hello ARUSH Lab & Diagnostics,\nI would like to book a test. Here are my details:\n\nPatient Name: \nTest Name: *${testName}*\nHome Address / Location Link: \n\nPlease confirm the pricing and appointment slot.`);
     window.open(`https://wa.me/919482724054?text=${text}`, "_blank");
   };
 

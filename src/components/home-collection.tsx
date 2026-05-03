@@ -24,7 +24,10 @@ export function HomeCollection() {
           <Button 
             size="lg" 
             className="bg-white hover:bg-slate-100 text-brand-accent text-xl py-8 px-10 rounded-full shadow-2xl hover:scale-105 transition-all w-full md:w-auto font-bold"
-            onClick={() => window.open('https://wa.me/919482724054?text=Hello%20ARUSH%20Lab%2C%20I%20want%20to%20book%20a%20home%20sample%20collection.', '_blank')}
+            onClick={() => {
+              const msg = `Hello ARUSH Lab & Diagnostics,\nI want to book a Home Sample Collection.\n\nPatient Name: \nTest Name(s): \nComplete Address & Location Link: \n\nPlease confirm your availability.`;
+              window.open(`https://wa.me/919482724054?text=${encodeURIComponent(msg)}`, '_blank');
+            }}
           >
             Book Home Collection
           </Button>
