@@ -47,20 +47,38 @@ export function Hero() {
           animate="visible"
         >
           {/* Top label */}
-          <motion.div variants={itemVariants} className="mb-5">
-            <Badge className="bg-white/10 text-white border border-white/20 px-4 py-1.5 text-xs sm:text-sm font-medium backdrop-blur-md rounded-full cursor-default">
-              <ShieldCheck className="w-3.5 h-3.5 mr-1.5 text-green-400 inline" />
-              NABL Certified · Trusted Diagnostics
+          <motion.div variants={itemVariants} className="mb-6">
+            <Badge className="bg-white/5 hover:bg-white/10 text-white border border-white/10 px-5 py-2 text-xs sm:text-sm font-medium backdrop-blur-md rounded-full cursor-default shadow-xl transition-colors">
+              <ShieldCheck className="w-4 h-4 mr-2 text-teal-400 inline" />
+              Trusted Diagnostics
             </Badge>
           </motion.div>
 
-          {/* Lab name */}
-          <motion.p
+          {/* Lab name Highlighted */}
+          <motion.div
             variants={itemVariants}
-            className="text-xs sm:text-sm font-bold uppercase tracking-[0.25em] text-teal-400 mb-3"
+            className="relative mb-8 group"
           >
-            ARUSH Lab &amp; Diagnostics
-          </motion.p>
+            {/* Animated glowing background */}
+            <div className="absolute -inset-1 bg-gradient-to-r from-red-500/40 via-teal-500/40 to-blue-600/40 blur-xl rounded-full opacity-60 group-hover:opacity-100 transition-opacity duration-700" />
+            
+            {/* The Lab Name Pill */}
+            <div className="relative px-6 py-2.5 bg-slate-900/80 border border-white/10 rounded-full backdrop-blur-xl shadow-2xl flex items-center justify-center gap-3">
+              <span className="relative flex w-2 h-2">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+                <span className="relative inline-flex rounded-full w-2 h-2 bg-red-500"></span>
+              </span>
+              
+              <span className="bg-gradient-to-r from-red-400 via-white to-teal-300 bg-clip-text text-transparent font-black tracking-[0.25em] text-xs sm:text-sm md:text-base uppercase drop-shadow-sm">
+                ARUSH Lab &amp; Diagnostics
+              </span>
+
+              <span className="relative flex w-2 h-2">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-teal-400 opacity-75"></span>
+                <span className="relative inline-flex rounded-full w-2 h-2 bg-teal-500"></span>
+              </span>
+            </div>
+          </motion.div>
 
           {/* Headline */}
           <motion.h1
