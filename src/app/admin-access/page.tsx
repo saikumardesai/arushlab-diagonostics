@@ -4,6 +4,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { supabase, DEMO_BOOKING_DB, BookingRecord, BookingStatus } from "@/lib/supabase";
 import { Beaker, Search, RefreshCw, X, Plus, Copy, Check, Trash2 } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
 
 function generateId() {
   const num = Math.floor(1000 + Math.random() * 9000);
@@ -173,117 +174,133 @@ export default function AdminDashboard() {
 
   return (
     <div className="min-h-screen bg-slate-50 relative">
-      {/* Add Patient Modal - MOVED TO TOP LEVEL */}
-      {showModal && (
-        <div 
-          className="fixed inset-0 bg-black/70 backdrop-blur-md flex items-center justify-center p-4" 
-          style={{ zIndex: 9999 }}
-        >
-          <div className="bg-white rounded-3xl shadow-2xl w-full max-w-lg border border-slate-200 overflow-hidden animate-in fade-in zoom-in duration-200">
-            <div className="flex items-center justify-between p-6 border-b border-slate-100 bg-slate-50/50">
-              <h2 className="text-xl font-bold text-slate-800 flex items-center gap-2">
-                <Plus className="w-6 h-6 text-teal-600" /> 
-                Add New Patient
-              </h2>
-              <button 
-                onClick={() => setShowModal(false)} 
-                className="text-slate-400 hover:text-slate-600 p-2 rounded-xl hover:bg-slate-200 transition-colors"
-              >
-                <X className="w-6 h-6" />
-              </button>
-            </div>
-            <form onSubmit={handleAddPatient} className="p-8 space-y-5">
-              <div className="bg-slate-50 rounded-xl px-4 py-3 border border-slate-200">
-                <p className="text-xs text-slate-500 font-medium uppercase tracking-wide">Auto-Generated Booking ID</p>
-                <p className="font-mono font-bold text-[#1E3A8A] text-lg">{form.id}</p>
-              </div>
-              <div>
-                <label className="text-sm font-semibold text-slate-700">Patient Name *</label>
-                <input
-                  type="text"
-                  value={form.patient_name}
-                  onChange={e => setForm(f => ({ ...f, patient_name: e.target.value }))}
-                  className="w-full mt-1 p-3 border rounded-xl focus:ring-2 focus:ring-blue-500 outline-none"
-                  placeholder="e.g. Rahul Sharma"
-                  required
-                />
-              </div>
-              <div>
-                <label className="text-sm font-semibold text-slate-700">Test Name *</label>
-                <input
-                  type="text"
-                  value={form.test_name}
-                  onChange={e => setForm(f => ({ ...f, test_name: e.target.value }))}
-                  className="w-full mt-1 p-3 border rounded-xl focus:ring-2 focus:ring-blue-500 outline-none"
-                  placeholder="e.g. Complete Blood Count"
-                  required
-                />
-              </div>
-              <div>
-                <label className="text-sm font-semibold text-slate-700">Phlebotomist Name (optional)</label>
-                <input
-                  type="text"
-                  value={form.phlebotomist_name}
-                  onChange={e => setForm(f => ({ ...f, phlebotomist_name: e.target.value }))}
-                  className="w-full mt-1 p-3 border rounded-xl focus:ring-2 focus:ring-blue-500 outline-none"
-                  placeholder="e.g. Rahul S."
-                />
-              </div>
-              <div>
-                <label className="text-sm font-semibold text-slate-700">Initial Status</label>
-                <select
-                  value={form.status}
-                  onChange={e => setForm(f => ({ ...f, status: e.target.value as BookingStatus }))}
-                  className="w-full mt-1 p-3 border rounded-xl focus:ring-2 focus:ring-blue-500 outline-none bg-white"
+      {/* Add Patient Modal */}
+      <AnimatePresence>
+        {showModal && (
+          <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4">
+            <motion.div 
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setShowModal(false)}
+              className="absolute inset-0 bg-black/60 backdrop-blur-sm"
+            />
+            <motion.div 
+              initial={{ scale: 0.9, opacity: 0, y: 20 }}
+              animate={{ scale: 1, opacity: 1, y: 0 }}
+              exit={{ scale: 0.9, opacity: 0, y: 20 }}
+              className="bg-white rounded-[2.5rem] shadow-2xl w-full max-w-lg border border-slate-200 overflow-hidden relative z-10"
+            >
+              <div className="flex items-center justify-between p-8 border-b border-slate-100 bg-slate-50/50">
+                <h2 className="text-2xl font-black text-slate-800 flex items-center gap-3">
+                  <div className="bg-teal-100 p-2 rounded-xl">
+                    <Plus className="w-6 h-6 text-teal-600" /> 
+                  </div>
+                  New Patient
+                </h2>
+                <button 
+                  onClick={() => setShowModal(false)} 
+                  className="text-slate-400 hover:text-slate-600 p-2 rounded-xl hover:bg-slate-200 transition-colors"
                 >
-                  {statuses.map(s => <option key={s} value={s}>{s}</option>)}
-                </select>
-              </div>
-              <div className="flex gap-3 pt-2">
-                <button type="button" onClick={() => setShowModal(false)} className="flex-1 py-3 px-4 border rounded-xl hover:bg-slate-50 font-medium transition-colors">Cancel</button>
-                <button type="submit" disabled={saving} className="flex-1 bg-[#0D9488] hover:bg-teal-700 text-white py-3 px-4 rounded-xl font-bold transition-all active:scale-95">
-                  {saving ? "Saving..." : "Add Patient"}
+                  <X className="w-6 h-6" />
                 </button>
               </div>
-            </form>
+              <form onSubmit={handleAddPatient} className="p-8 space-y-6">
+                <div className="bg-slate-50 rounded-2xl px-6 py-4 border border-slate-200">
+                  <p className="text-xs text-slate-500 font-bold uppercase tracking-widest mb-1">Booking ID</p>
+                  <p className="font-mono font-black text-[#1E3A8A] text-xl">{form.id}</p>
+                </div>
+                <div className="space-y-4">
+                  <div>
+                    <label className="text-sm font-bold text-slate-700 ml-1">Patient Name *</label>
+                    <input
+                      type="text"
+                      value={form.patient_name}
+                      onChange={e => setForm(f => ({ ...f, patient_name: e.target.value }))}
+                      className="w-full mt-1.5 p-4 bg-slate-50 border-2 border-transparent focus:border-teal-500 focus:bg-white rounded-2xl outline-none transition-all"
+                      placeholder="e.g. Rahul Sharma"
+                      required
+                    />
+                  </div>
+                  <div>
+                    <label className="text-sm font-bold text-slate-700 ml-1">Test Name *</label>
+                    <input
+                      type="text"
+                      value={form.test_name}
+                      onChange={e => setForm(f => ({ ...f, test_name: e.target.value }))}
+                      className="w-full mt-1.5 p-4 bg-slate-50 border-2 border-transparent focus:border-teal-500 focus:bg-white rounded-2xl outline-none transition-all"
+                      placeholder="e.g. Complete Blood Count"
+                      required
+                    />
+                  </div>
+                  <div>
+                    <label className="text-sm font-bold text-slate-700 ml-1">Phlebotomist (optional)</label>
+                    <input
+                      type="text"
+                      value={form.phlebotomist_name}
+                      onChange={e => setForm(f => ({ ...f, phlebotomist_name: e.target.value }))}
+                      className="w-full mt-1.5 p-4 bg-slate-50 border-2 border-transparent focus:border-teal-500 focus:bg-white rounded-2xl outline-none transition-all"
+                      placeholder="e.g. Rahul S."
+                    />
+                  </div>
+                </div>
+                <div className="flex gap-4 pt-4">
+                  <button type="submit" disabled={saving} className="flex-1 bg-teal-600 hover:bg-teal-700 text-white py-5 rounded-2xl font-black text-lg transition-all active:scale-95 shadow-lg shadow-teal-200 disabled:opacity-50">
+                    {saving ? "Saving..." : "Add Patient"}
+                  </button>
+                </div>
+              </form>
+            </motion.div>
           </div>
-        </div>
-      )}
+        )}
+      </AnimatePresence>
 
       {/* Delete Confirmation Modal */}
-      {deleteConfirm && (
-        <div 
-          className="fixed inset-0 bg-black/70 backdrop-blur-md flex items-center justify-center p-4" 
-          style={{ zIndex: 10000 }}
-        >
-          <div className="bg-white rounded-3xl shadow-2xl w-full max-w-sm border border-slate-200 overflow-hidden animate-in fade-in zoom-in duration-200">
-            <div className="p-8 text-center">
-              <div className="w-16 h-16 bg-red-50 text-red-600 rounded-full flex items-center justify-center mx-auto mb-4">
-                <Trash2 className="w-8 h-8" />
+      <AnimatePresence>
+        {deleteConfirm && (
+          <div className="fixed inset-0 z-[10000] flex items-center justify-center p-4">
+            <motion.div 
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setDeleteConfirm(null)}
+              className="absolute inset-0 bg-black/60 backdrop-blur-sm"
+            />
+            <motion.div 
+              initial={{ scale: 0.9, opacity: 0, y: 20 }}
+              animate={{ scale: 1, opacity: 1, y: 0 }}
+              exit={{ scale: 0.9, opacity: 0, y: 20 }}
+              className="bg-white rounded-[2.5rem] shadow-2xl w-full max-w-sm border border-slate-200 overflow-hidden relative z-10"
+            >
+              <div className="p-10 text-center">
+                <div className="w-20 h-20 bg-red-50 text-red-600 rounded-3xl flex items-center justify-center mx-auto mb-6 transform rotate-12">
+                  <Trash2 className="w-10 h-10" />
+                </div>
+                <h3 className="text-2xl font-extrabold text-slate-800 mb-3 tracking-tight">Confirm Delete</h3>
+                <p className="text-slate-500 text-base mb-10 leading-relaxed">
+                  Are you sure you want to delete patient <span className="font-bold text-red-600 underline underline-offset-4">{deleteConfirm.name}</span>?
+                </p>
+                <div className="flex flex-col gap-3">
+                  <button 
+                    onClick={confirmDelete} 
+                    disabled={saving}
+                    className="w-full bg-red-600 hover:bg-red-700 text-white py-4 rounded-2xl font-bold transition-all active:scale-95 disabled:opacity-50 shadow-lg shadow-red-200"
+                  >
+                    {saving ? "Deleting..." : "Yes, Delete Record"}
+                  </button>
+                  <button 
+                    onClick={() => setDeleteConfirm(null)} 
+                    className="w-full py-4 px-4 text-slate-500 hover:text-slate-800 font-bold transition-colors"
+                  >
+                    Keep Patient
+                  </button>
+                </div>
               </div>
-              <h3 className="text-xl font-bold text-slate-800 mb-2">Are you sure?</h3>
-              <p className="text-slate-500 text-sm mb-8 leading-relaxed">
-                You are about to delete patient <span className="font-bold text-slate-800">{deleteConfirm.name}</span>. This action cannot be undone.
-              </p>
-              <div className="flex gap-3">
-                <button 
-                  onClick={() => setDeleteConfirm(null)} 
-                  className="flex-1 py-3 px-4 border rounded-xl hover:bg-slate-50 font-medium transition-colors"
-                >
-                  Cancel
-                </button>
-                <button 
-                  onClick={confirmDelete} 
-                  disabled={saving}
-                  className="flex-1 bg-red-600 hover:bg-red-700 text-white py-3 px-4 rounded-xl font-bold transition-all active:scale-95 disabled:opacity-50"
-                >
-                  {saving ? "Deleting..." : "Delete Now"}
-                </button>
-              </div>
-            </div>
+            </motion.div>
           </div>
-        </div>
-      )}
+        )}
+      </AnimatePresence>
+
 
       {/* Admin Nav */}
       <header className="bg-white border-b border-slate-200 px-6 py-4 flex items-center justify-between">
