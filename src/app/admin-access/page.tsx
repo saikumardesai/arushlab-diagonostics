@@ -3,7 +3,7 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { supabase, DEMO_BOOKING_DB, BookingRecord, BookingStatus } from "@/lib/supabase";
-import { Beaker, Search, RefreshCw, X, Plus, Copy, Check } from "lucide-react";
+import { Beaker, Search, RefreshCw, X, Plus, Copy, Check, Trash2 } from "lucide-react";
 
 function generateId() {
   const num = Math.floor(1000 + Math.random() * 9000);
@@ -68,6 +68,27 @@ export default function AdminDashboard() {
       const updated = bookings.map(b => b.id === id ? { ...b, status: newStatus } : b);
       localStorage.setItem('arush_mock_bookings', JSON.stringify(updated));
     }
+  };
+
+  const handleDelete = async (id: string, name: string) => {
+    if (!confirm(`Are you sure you want to delete patient ${name}?`)) return;
+
+    if (supabase) {
+      const { error } = await supabase.from('bookings').delete().eq('id', id);
+      if (error) {
+        alert(`Error deleting: ${error.message}`);
+        return;
+      }
+    } else {
+      const localData = localStorage.getItem('arush_mock_bookings');
+      if (localData) {
+        const db = JSON.parse(localData) as BookingRecord[];
+        const updated = db.filter(b => b.id !== id);
+        localStorage.setItem('arush_mock_bookings', JSON.stringify(updated));
+      }
+    }
+    
+    await fetchBookings();
   };
 
   const handleAddPatient = async (e: React.FormEvent) => {
@@ -282,6 +303,7 @@ export default function AdminDashboard() {
                     <th className="px-6 py-4">Current Status</th>
                     <th className="px-6 py-4">Assigned To</th>
                     <th className="px-6 py-4 text-center">Tracking Link</th>
+                    <th className="px-6 py-4 text-center">Actions</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-100 text-slate-800">
@@ -307,6 +329,15 @@ export default function AdminDashboard() {
                           className="flex items-center gap-1.5 mx-auto text-blue-600 hover:text-blue-800 font-medium text-sm"
                         >
                           {copiedId === row.id ? <><Check className="w-4 h-4 text-green-600" /> Copied!</> : <><Copy className="w-4 h-4" /> Copy Link</>}
+                        </button>
+                      </td>
+                      <td className="px-6 py-4 text-center">
+                        <button
+                          onClick={() => handleDelete(row.id, row.patient_name)}
+                          className="p-2 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-all active:scale-90"
+                          title="Delete Patient"
+                        >
+                          <Trash2 className="w-4 h-4" />
                         </button>
                       </td>
                     </tr>
