@@ -23,7 +23,7 @@ const TRUST_BADGES = [
 
 export function Hero() {
   return (
-    <section id="home" className="relative w-full min-h-[90vh] flex items-center justify-center overflow-hidden">
+    <section id="home" className="relative w-full min-h-[90vh] flex items-start justify-center pt-32 sm:pt-48 lg:pt-56 overflow-hidden">
       {/* Background */}
       <div
         className="absolute inset-0 z-0 bg-cover bg-center bg-no-repeat"
@@ -39,7 +39,7 @@ export function Hero() {
       </div>
 
       {/* Content */}
-      <div className="relative z-10 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-24 mt-8 sm:mt-16">
+      <div className="relative z-10 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-16 sm:pb-24">
         <motion.div
           className="flex flex-col items-center text-center max-w-4xl mx-auto"
           variants={containerVariants}
