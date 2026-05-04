@@ -39,24 +39,35 @@ export default function AdminDashboard() {
 
   const fetchBookings = useCallback(async () => {
     setLoading(true);
-    if (supabase) {
-      const { data } = await supabase.from('bookings').select('*').order('date', { ascending: false });
-      if (data) setBookings(data as BookingRecord[]);
-    } else {
-      try {
-        const localData = localStorage.getItem('arush_mock_bookings');
-        if (localData) {
-          setBookings(JSON.parse(localData));
+    try {
+      if (supabase) {
+        const { data, error } = await supabase.from('bookings').select('*').order('date', { ascending: false });
+        if (error) {
+          console.error('Supabase fetch error:', error.message);
+          setBookings([]);
         } else {
-          localStorage.setItem('arush_mock_bookings', JSON.stringify(DEMO_BOOKING_DB));
+          setBookings((data || []) as BookingRecord[]);
+        }
+      } else {
+        try {
+          const localData = localStorage.getItem('arush_mock_bookings');
+          if (localData) {
+            setBookings(JSON.parse(localData));
+          } else {
+            localStorage.setItem('arush_mock_bookings', JSON.stringify(DEMO_BOOKING_DB));
+            setBookings(DEMO_BOOKING_DB);
+          }
+        } catch (storageError) {
+          console.error('localStorage is unavailable', storageError);
           setBookings(DEMO_BOOKING_DB);
         }
-      } catch (error) {
-        console.error('localStorage is unavailable', error);
-        setBookings(DEMO_BOOKING_DB);
       }
+    } catch (error) {
+      console.error('Failed to fetch bookings:', error);
+      setBookings([]);
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   }, []);
 
   useEffect(() => {

@@ -1,4 +1,4 @@
-[[redirects]]
-  from = "/*"
-  to = "/index.html"
-  status = 200
+/lab-admin /404.html 404
+/lab-admin/* /404.html 404
+/lab-dashboard/* /lab-dashboard/index.html 200
+/track/* /track/index.html 200
