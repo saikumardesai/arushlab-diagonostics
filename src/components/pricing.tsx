@@ -382,10 +382,21 @@ export function Pricing() {
                       </div>
                     </TableCell>
                   </TableRow>
+                ) : tests.length === 0 ? (
+                  <TableRow>
+                    <TableCell colSpan={4} className="h-40 text-center text-slate-500">
+                      <div className="flex flex-col items-center gap-2">
+                        <Info className="w-8 h-8 text-slate-300" />
+                        <p className="font-bold text-lg text-slate-600">No tests available yet</p>
+                        <p className="text-sm">Please add tests from the Admin Dashboard.</p>
+                      </div>
+                    </TableCell>
+                  </TableRow>
                 ) : filteredData.length === 0 ? (
                   <TableRow>
-                    <TableCell colSpan={4} className="h-40 text-center text-slate-500 text-lg">
-                      No tests found matching &quot;{searchTerm}&quot;
+                    <TableCell colSpan={4} className="h-40 text-center text-slate-500">
+                      <p className="font-bold text-lg text-slate-600">No results found</p>
+                      <p className="text-sm">We couldn&apos;t find any tests matching &quot;{searchTerm}&quot;</p>
                     </TableCell>
                   </TableRow>
                 ) : (
