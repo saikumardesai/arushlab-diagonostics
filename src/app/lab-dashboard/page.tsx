@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { supabase, DEMO_BOOKING_DB, BookingRecord, BookingStatus } from "@/lib/supabase";
-import { Beaker, Search, RefreshCw, X, Plus, Copy, Check, Trash2, ExternalLink, Clock, Phone, MapPin, UploadCloud, Flame } from "lucide-react";
+import { Beaker, Search, RefreshCw, X, Plus, Copy, Check, Trash2, ExternalLink, Clock, Phone, MapPin, UploadCloud, Flame, FileX } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
 
@@ -102,6 +102,32 @@ export default function AdminDashboard() {
       alert("Cleanup failed: " + e.message);
     } finally {
       setSaving(false);
+    }
+  };
+
+  const handleDeleteSingleReport = async (bookingId: string) => {
+    if (!supabase) return;
+    if (!confirm("Are you sure you want to delete this specific report? This cannot be undone.")) return;
+
+    setUploadingId(bookingId);
+    try {
+      const fileName = `${bookingId}.pdf`;
+      const { error: storageError } = await supabase.storage.from('lab-reports').remove([fileName]);
+      if (storageError) throw storageError;
+
+      const { error: dbError } = await supabase.from('bookings').update({ 
+        report_url: null, 
+        report_uploaded_at: null 
+      }).eq('id', bookingId);
+      
+      if (dbError) throw dbError;
+
+      setBookings(prev => prev.map(b => b.id === bookingId ? { ...b, report_url: undefined, report_uploaded_at: undefined } : b));
+      alert("Report deleted successfully.");
+    } catch (e: any) {
+      alert("Delete failed: " + e.message);
+    } finally {
+      setUploadingId(null);
     }
   };
 
@@ -397,9 +423,14 @@ export default function AdminDashboard() {
                           <ExternalLink className="w-4 h-4" />
                         </Link>
                         {booking.report_url ? (
-                          <div className="p-2 text-emerald-600 bg-emerald-50 rounded-lg border border-emerald-200">
-                             <Check className="w-4 h-4" />
-                          </div>
+                          <button 
+                            onClick={() => void handleDeleteSingleReport(booking.id)}
+                            disabled={uploadingId === booking.id}
+                            className="p-2 text-red-600 bg-red-50 rounded-lg border border-red-200 hover:bg-red-600 hover:text-white transition-all"
+                            title="Delete Report"
+                          >
+                             {uploadingId === booking.id ? <RefreshCw className="w-4 h-4 animate-spin" /> : <FileX className="w-4 h-4" />}
+                          </button>
                         ) : (
                           <label className="p-2 bg-indigo-50 text-indigo-600 rounded-lg hover:bg-indigo-600 hover:text-white transition-all border border-indigo-100 cursor-pointer" title="Upload PDF Report">
                              {uploadingId === booking.id ? <RefreshCw className="w-4 h-4 animate-spin" /> : <UploadCloud className="w-4 h-4" />}
@@ -524,9 +555,14 @@ export default function AdminDashboard() {
                         </td>
                         <td className="px-6 py-5 text-center">
                            {booking.report_url ? (
-                            <div className="inline-flex items-center justify-center p-2.5 px-3 bg-emerald-50 text-emerald-600 rounded-xl border border-emerald-200">
-                               <Check className="w-4 h-4 mr-1" /> <span className="text-[10px] font-bold">SENT</span>
-                            </div>
+                            <button 
+                              onClick={() => void handleDeleteSingleReport(booking.id)}
+                              disabled={uploadingId === booking.id}
+                              className="inline-flex items-center justify-center p-2.5 px-3 bg-red-50 text-red-600 rounded-xl border border-red-200 hover:bg-red-600 hover:text-white transition-all"
+                              title="Delete This Report"
+                            >
+                               {uploadingId === booking.id ? <RefreshCw className="w-4 h-4 animate-spin" /> : <><FileX className="w-4 h-4 mr-1" /> <span className="text-[10px] font-bold uppercase tracking-tight">Delete</span></>}
+                            </button>
                            ) : (
                             <label className="inline-flex items-center justify-center p-2.5 bg-indigo-50 text-indigo-600 rounded-xl hover:bg-indigo-600 hover:text-white transition-all shadow-sm border border-indigo-100 cursor-pointer" title="Upload PDF Report">
                               {uploadingId === booking.id ? <RefreshCw className="w-4 h-4 animate-spin" /> : <UploadCloud className="w-4 h-4" />}
