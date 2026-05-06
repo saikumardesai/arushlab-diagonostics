@@ -393,18 +393,11 @@ export default function AdminDashboard() {
       {/* Premium Header */}
       <header className="bg-white/80 backdrop-blur-md border-b border-slate-200 px-4 sm:px-8 py-4 sticky top-0 z-50 shadow-sm">
         <div className="max-w-7xl mx-auto flex items-center justify-between">
-          <div className="flex items-center gap-3 text-[#1E3A8A]">
             <div className="bg-blue-600 p-2 rounded-xl shadow-lg shadow-blue-200">
               <Beaker className="w-5 h-5 text-white" />
             </div>
-            <h1 className="text-xl font-black tracking-tight uppercase">Admin <span className="text-blue-600">Portal</span></h1>
-          </div>
           
           <div className="flex items-center gap-4">
-            <div className="hidden md:flex items-center gap-2 px-3 py-1.5 bg-slate-100 rounded-full">
-              <div className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse" />
-              <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest">System Live</span>
-            </div>
             <button 
               className="text-sm font-bold text-red-500 hover:text-red-700 bg-red-50 hover:bg-red-100 px-4 py-2 rounded-xl transition-all active:scale-95 border border-red-100" 
               onClick={() => setIsAuthenticated(false)}
@@ -421,8 +414,8 @@ export default function AdminDashboard() {
           <div className="p-6 sm:p-8 border-b border-slate-50 bg-slate-50/30">
             <div className="flex flex-col lg:row sm:flex-row sm:items-center sm:justify-between gap-6">
               <div>
-                <h2 className="text-2xl font-black text-slate-800 tracking-tight">Patient Database</h2>
-                <p className="text-slate-500 font-medium text-sm mt-1">{filtered.length} active records found</p>
+                <h2 className="text-2xl font-black text-slate-800 tracking-tight">Active Bookings</h2>
+                <p className="text-slate-500 font-medium text-sm mt-1">{filtered.length} records found</p>
               </div>
               
               <div className="flex flex-col sm:flex-row gap-3">
@@ -436,13 +429,6 @@ export default function AdminDashboard() {
                     className="w-full sm:w-72 pl-11 pr-4 py-3 bg-slate-100/50 border border-transparent rounded-2xl text-sm outline-none focus:ring-2 focus:ring-blue-500/20 focus:bg-white focus:border-blue-500/20 transition-all placeholder:text-slate-400 font-medium"
                   />
                 </div>
-                <button 
-                  className="px-6 py-3 bg-blue-600 text-white rounded-2xl hover:bg-blue-700 flex items-center justify-center gap-2 text-sm font-black transition-all shadow-xl shadow-blue-200 active:scale-95" 
-                  onClick={() => setShowModal(true)}
-                >
-                  <Plus className="w-5 h-5" />
-                  Add New Patient
-                </button>
               </div>
             </div>
           </div>
