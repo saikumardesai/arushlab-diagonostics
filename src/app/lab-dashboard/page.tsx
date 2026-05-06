@@ -344,44 +344,50 @@ export default function AdminDashboard() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 relative">
+    <div className="min-h-screen bg-[#F8FAFC] relative selection:bg-blue-100 selection:text-blue-900">
+      {/* Background Decorative Elements */}
+      <div className="fixed inset-0 pointer-events-none overflow-hidden">
+        <div className="absolute top-[-10%] right-[-5%] w-[40%] h-[40%] bg-blue-500/5 rounded-full blur-[120px]" />
+        <div className="absolute bottom-[20%] left-[-5%] w-[30%] h-[30%] bg-teal-500/5 rounded-full blur-[120px]" />
+      </div>
+
       <AnimatePresence>
         {deleteConfirm && (
-          <div className="fixed inset-0 z-[10000] flex items-center justify-center p-4">
+          <div className="fixed inset-0 z-[10000] flex items-center justify-center p-4 sm:p-6">
             <motion.div 
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               onClick={() => setDeleteConfirm(null)}
-              className="absolute inset-0 bg-black/60 backdrop-blur-sm"
+              className="absolute inset-0 bg-slate-900/40 backdrop-blur-md"
             />
             <motion.div 
-              initial={{ scale: 0.9, opacity: 0, y: 20 }}
+              initial={{ scale: 0.9, opacity: 0, y: 30 }}
               animate={{ scale: 1, opacity: 1, y: 0 }}
-              exit={{ scale: 0.9, opacity: 0, y: 20 }}
-              className="bg-white rounded-2xl sm:rounded-[2.5rem] shadow-2xl w-full max-w-sm border border-slate-200 overflow-hidden relative z-10"
+              exit={{ scale: 0.9, opacity: 0, y: 30 }}
+              className="bg-white rounded-[2.5rem] shadow-[0_32px_64px_-15px_rgba(0,0,0,0.2)] w-full max-w-md border border-slate-100 overflow-hidden relative z-10"
             >
-              <div className="p-6 sm:p-10 text-center">
-                <div className="w-16 h-16 sm:w-20 sm:h-20 bg-red-50 text-red-600 rounded-2xl sm:rounded-3xl flex items-center justify-center mx-auto mb-4 sm:mb-6 transform rotate-12">
-                  <Trash2 className="w-8 h-8 sm:w-10 sm:h-10" />
+              <div className="p-8 sm:p-12 text-center">
+                <div className="w-20 h-20 bg-red-50 text-red-500 rounded-3xl flex items-center justify-center mx-auto mb-8 transform rotate-12 transition-transform hover:rotate-0">
+                  <Trash2 className="w-10 h-10" />
                 </div>
-                <h3 className="text-xl sm:text-2xl font-extrabold text-slate-800 mb-2 sm:mb-3 tracking-tight">Confirm Delete</h3>
-                <p className="text-slate-500 text-sm sm:text-base mb-6 sm:mb-10 leading-relaxed">
-                  Are you sure you want to delete patient <span className="font-bold text-red-600 underline underline-offset-4">{deleteConfirm.name}</span>?
+                <h3 className="text-2xl font-black text-slate-900 mb-3 tracking-tight">Delete Booking?</h3>
+                <p className="text-slate-500 font-medium mb-10 leading-relaxed">
+                  You are about to remove <span className="text-slate-900 font-bold underline underline-offset-4 decoration-red-200">{deleteConfirm.name}</span> from the system. This action is permanent.
                 </p>
                 <div className="flex flex-col gap-3">
                   <button 
                     onClick={confirmDelete} 
                     disabled={saving}
-                    className="w-full bg-red-600 hover:bg-red-700 text-white py-3 sm:py-4 rounded-xl sm:rounded-2xl font-bold transition-all active:scale-95 disabled:opacity-50 shadow-lg shadow-red-200"
+                    className="w-full bg-slate-900 hover:bg-red-600 text-white py-5 rounded-2xl font-bold transition-all active:scale-[0.98] disabled:opacity-50 shadow-xl shadow-slate-200"
                   >
-                    {saving ? "Deleting..." : "Yes, Delete Record"}
+                    {saving ? "Processing..." : "Confirm Deletion"}
                   </button>
                   <button 
                     onClick={() => setDeleteConfirm(null)} 
-                    className="w-full py-3 sm:py-4 px-4 text-slate-500 hover:text-slate-800 font-bold transition-colors"
+                    className="w-full py-4 text-slate-400 font-bold hover:text-slate-900 transition-colors"
                   >
-                    Keep Patient
+                    Cancel
                   </button>
                 </div>
               </div>
@@ -390,222 +396,245 @@ export default function AdminDashboard() {
         )}
       </AnimatePresence>
 
-      {/* Premium Header */}
-      <header className="bg-white/80 backdrop-blur-md border-b border-slate-200 px-4 sm:px-8 py-4 sticky top-0 z-50 shadow-sm">
-        <div className="max-w-7xl mx-auto flex items-center justify-between">
-            <div className="bg-blue-600 p-2 rounded-xl shadow-lg shadow-blue-200">
-              <Beaker className="w-5 h-5 text-white" />
+      {/* Modern Glass Header */}
+      <header className="sticky top-0 z-[100] px-4 sm:px-8 py-4 sm:py-6">
+        <div className="max-w-7xl mx-auto">
+          <div className="bg-white/70 backdrop-blur-2xl border border-white/50 rounded-[2rem] px-6 sm:px-10 py-4 flex items-center justify-between shadow-[0_8px_32px_rgba(0,0,0,0.04)]">
+            <div className="flex items-center gap-4">
+               {/* Icon removed as requested */}
+               <div className="flex flex-col">
+                 <span className="text-slate-900 font-black text-xl tracking-tighter uppercase leading-none">ARUSH</span>
+                 <span className="text-[10px] font-bold text-blue-600 tracking-[0.2em] uppercase mt-1">Management</span>
+               </div>
             </div>
-          
-          <div className="flex items-center gap-4">
+            
             <button 
-              className="text-sm font-bold text-red-500 hover:text-red-700 bg-red-50 hover:bg-red-100 px-4 py-2 rounded-xl transition-all active:scale-95 border border-red-100" 
+              className="group flex items-center gap-2 px-6 py-2.5 bg-red-50 hover:bg-red-500 text-red-600 hover:text-white rounded-xl transition-all duration-300 font-bold text-sm active:scale-95 border border-red-100/50" 
               onClick={() => setIsAuthenticated(false)}
             >
-              Logout
+              <span>Logout</span>
+              <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
             </button>
           </div>
         </div>
       </header>
 
-      <main className="max-w-7xl mx-auto p-4 sm:p-8">
-        <div className="bg-white rounded-[2rem] shadow-[0_20px_50px_-12px_rgba(0,0,0,0.05)] border border-slate-100 overflow-hidden">
-          {/* Dashboard Toolbar */}
-          <div className="p-6 sm:p-8 border-b border-slate-50 bg-slate-50/30">
-            <div className="flex flex-col lg:row sm:flex-row sm:items-center sm:justify-between gap-6">
-              <div>
-                <h2 className="text-2xl font-black text-slate-800 tracking-tight">Active Bookings</h2>
-                <p className="text-slate-500 font-medium text-sm mt-1">{filtered.length} records found</p>
+      <main className="max-w-7xl mx-auto px-4 sm:px-8 pb-20">
+        {/* Statistics or Quick Info Row could go here */}
+        
+        <div className="bg-white rounded-[3rem] shadow-[0_40px_80px_-20px_rgba(0,0,0,0.06)] border border-slate-100/50 overflow-hidden">
+          {/* Enhanced Toolbar */}
+          <div className="px-8 sm:px-12 py-10 sm:py-14 border-b border-slate-50 bg-gradient-to-b from-slate-50/50 to-transparent">
+            <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-10">
+              <div className="space-y-2">
+                <div className="inline-flex items-center gap-2 px-3 py-1 bg-blue-50 text-blue-600 rounded-full mb-2">
+                  <Clock className="w-3.5 h-3.5" />
+                  <span className="text-[10px] font-black uppercase tracking-widest leading-none">Live Database</span>
+                </div>
+                <h2 className="text-4xl sm:text-5xl font-black text-slate-900 tracking-tight">Active Bookings</h2>
+                <p className="text-slate-400 font-medium text-lg">Managing {filtered.length} total laboratory entries</p>
               </div>
               
-              <div className="flex flex-col sm:flex-row gap-3">
-                <div className="relative group">
-                  <Search className="w-4 h-4 absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-blue-600 transition-colors" />
-                  <input
-                    type="text"
-                    value={search}
-                    onChange={e => setSearch(e.target.value)}
-                    placeholder="Search by name or ID..."
-                    className="w-full sm:w-72 pl-11 pr-4 py-3 bg-slate-100/50 border border-transparent rounded-2xl text-sm outline-none focus:ring-2 focus:ring-blue-500/20 focus:bg-white focus:border-blue-500/20 transition-all placeholder:text-slate-400 font-medium"
-                  />
+              <div className="w-full lg:w-auto">
+                <div className="relative group max-w-md ml-auto">
+                  <div className="absolute inset-0 bg-blue-600/5 rounded-2xl blur-xl group-focus-within:bg-blue-600/10 transition-all" />
+                  <div className="relative flex items-center">
+                    <Search className="w-5 h-5 absolute left-5 text-slate-400 group-focus-within:text-blue-600 transition-colors" />
+                    <input
+                      type="text"
+                      value={search}
+                      onChange={e => setSearch(e.target.value)}
+                      placeholder="Search patient, test or ID..."
+                      className="w-full lg:w-96 pl-14 pr-6 py-5 bg-white border border-slate-100 rounded-[1.5rem] text-sm outline-none focus:ring-2 focus:ring-blue-500/10 focus:border-blue-500/20 transition-all placeholder:text-slate-400 font-bold shadow-sm"
+                    />
+                  </div>
                 </div>
               </div>
             </div>
           </div>
 
-          {/* Content */}
-          <div className="min-h-[400px]">
+          {/* Premium Content Area */}
+          <div className="px-6 sm:px-10 pb-10">
             {loading ? (
-              <div className="flex flex-col items-center justify-center py-32 text-slate-400 gap-4">
-                <RefreshCw className="w-10 h-10 animate-spin text-blue-500" />
-                <p className="font-bold tracking-widest uppercase text-xs">Synchronizing Data...</p>
+              <div className="flex flex-col items-center justify-center py-40 text-slate-300 gap-6">
+                <div className="relative">
+                  <RefreshCw className="w-16 h-16 animate-spin text-blue-500" />
+                  <div className="absolute inset-0 blur-xl bg-blue-500/20 animate-pulse" />
+                </div>
+                <p className="font-black tracking-[0.3em] uppercase text-xs text-slate-400">Decrypting Records...</p>
               </div>
             ) : filtered.length === 0 ? (
-              <div className="flex flex-col items-center justify-center py-32 text-slate-400 px-4 text-center">
-                <div className="bg-slate-50 p-6 rounded-full mb-4">
-                   <Search className="w-12 h-12 text-slate-200" />
+              <div className="flex flex-col items-center justify-center py-40 text-center animate-in fade-in slide-in-from-bottom-4 duration-700">
+                <div className="w-24 h-24 bg-slate-50 text-slate-200 rounded-[2.5rem] flex items-center justify-center mb-8 shadow-inner">
+                   <Search className="w-12 h-12" />
                 </div>
-                <p className="font-bold text-slate-800 text-lg">No records matched your search</p>
-                <p className="text-sm mt-1 font-medium">Try searching for a different patient name or ID.</p>
+                <h3 className="text-2xl font-black text-slate-900 mb-2">No Matching Records</h3>
+                <p className="text-slate-400 font-medium max-w-xs mx-auto">Adjust your search parameters or check the global database.</p>
               </div>
             ) : (
-              <>
-                {/* Mobile View */}
-                <div className="md:hidden divide-y divide-slate-50">
-                  {filtered.map((booking) => (
-                    <div key={booking.id} className="p-6 hover:bg-blue-50/30 transition-colors">
-                      <div className="flex justify-between items-start mb-4">
-                        <div>
-                          <h3 className="font-black text-slate-800 text-lg leading-tight">{booking.patient_name}</h3>
-                          <div className="flex items-center gap-2 mt-1">
-                            <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{booking.id}</span>
-                            <div className="w-1 h-1 bg-slate-300 rounded-full" />
-                            <span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">{new Date(booking.date).toLocaleDateString()}</span>
-                          </div>
-                        </div>
-                        <div className="flex gap-2">
-                           <button onClick={() => setDeleteConfirm({ id: booking.id, name: booking.patient_name })} className="p-2 text-red-400 hover:text-red-600 bg-red-50 rounded-lg transition-all"><Trash2 className="w-4 h-4" /></button>
-                        </div>
-                      </div>
-                      <div className="flex flex-wrap gap-2 mb-4">
-                        <span className="px-3 py-1 bg-blue-50 text-blue-700 rounded-lg text-[10px] font-black uppercase tracking-widest border border-blue-100">{booking.test_name}</span>
-                        <span className={`px-3 py-1 rounded-lg text-[10px] font-black uppercase tracking-widest border ${getStatusColor(booking.status)}`}>{booking.status}</span>
-                      </div>
-                      <div className="grid grid-cols-2 gap-4">
-                        <label className="flex flex-col gap-1 cursor-pointer">
-                           <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Report</span>
-                           <div className="flex items-center gap-2 p-3 bg-slate-50 rounded-xl border border-slate-100">
-                              {booking.report_url ? <Check className="w-4 h-4 text-emerald-500" /> : <UploadCloud className="w-4 h-4 text-blue-500" />}
-                              <span className="text-xs font-bold text-slate-700">{booking.report_url ? "Uploaded" : "Upload"}</span>
-                              <input type="file" accept=".pdf" className="hidden" onChange={(e) => void handleUploadReport(booking.id, e)} />
-                           </div>
-                        </label>
-                        <Link href={`/track?id=${booking.id}`} className="flex flex-col gap-1">
-                           <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Tracking</span>
-                           <div className="flex items-center gap-2 p-3 bg-slate-50 rounded-xl border border-slate-100">
-                              <ExternalLink className="w-4 h-4 text-blue-500" />
-                              <span className="text-xs font-bold text-slate-700">Open</span>
-                           </div>
-                        </Link>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-
-                {/* Desktop View */}
-                <div className="hidden md:block overflow-x-auto">
-                  <table className="w-full text-left">
+              <div className="overflow-hidden">
+                {/* Desktop View - High End Table */}
+                <div className="hidden lg:block overflow-x-auto">
+                  <table className="w-full text-left border-separate border-spacing-y-4">
                     <thead>
-                      <tr className="bg-slate-50/50 text-slate-400 text-[10px] font-black uppercase tracking-widest border-b border-slate-50">
-                        <th className="px-8 py-5">Patient & Details</th>
-                        <th className="px-8 py-5">Assigned Test</th>
-                        <th className="px-8 py-5">Status Tracking</th>
-                        <th className="px-8 py-5">Report Access</th>
-                        <th className="px-8 py-5 text-center">Delete</th>
+                      <tr className="text-slate-400 text-[10px] font-black uppercase tracking-[0.2em]">
+                        <th className="px-6 py-4">Patient Information</th>
+                        <th className="px-6 py-4">Laboratory Test</th>
+                        <th className="px-6 py-4">Internal Status</th>
+                        <th className="px-6 py-4">Deliverables</th>
+                        <th className="px-6 py-4 text-center">Manage</th>
                       </tr>
                     </thead>
-                    <tbody className="divide-y divide-slate-50">
+                    <tbody className="">
                       {filtered.map((booking) => (
-                        <tr key={booking.id} className="hover:bg-blue-50/20 transition-colors group">
-                          <td className="px-8 py-6">
+                        <motion.tr 
+                          initial={{ opacity: 0, y: 10 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          key={booking.id} 
+                          className="group hover:scale-[1.01] transition-all duration-300"
+                        >
+                          <td className="px-6 py-6 bg-slate-50/50 group-hover:bg-blue-50/30 rounded-l-[1.5rem] transition-colors border-y border-l border-slate-50/50">
                             <div className="flex flex-col">
-                              <span className="font-black text-slate-800 text-base group-hover:text-blue-700 transition-colors">{booking.patient_name}</span>
-                              <div className="flex items-center gap-2 mt-1">
+                              <span className="font-black text-slate-900 text-lg leading-tight group-hover:text-blue-600 transition-colors">{booking.patient_name}</span>
+                              <div className="flex items-center gap-2 mt-1.5">
                                 <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{booking.id}</span>
-                                <div className="w-1 h-1 bg-slate-300 rounded-full" />
-                                <span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest leading-none">{new Date(booking.date).toLocaleDateString()}</span>
+                                <span className="w-1 h-1 bg-slate-200 rounded-full" />
+                                <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{new Date(booking.date).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })}</span>
                               </div>
                             </div>
                           </td>
-                          <td className="px-8 py-6">
-                            <span className="px-3 py-1.5 bg-blue-50 text-blue-700 rounded-xl text-[10px] font-black uppercase tracking-widest border border-blue-100">
-                              {booking.test_name}
-                            </span>
+                          <td className="px-6 py-6 bg-slate-50/50 group-hover:bg-blue-50/30 transition-colors border-y border-slate-50/50">
+                            <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-white border border-slate-100 rounded-xl shadow-sm">
+                              <div className="w-1.5 h-1.5 bg-blue-500 rounded-full" />
+                              <span className="text-[10px] font-black text-slate-700 uppercase tracking-widest">
+                                {booking.test_name}
+                              </span>
+                            </div>
                           </td>
-                          <td className="px-8 py-6">
-                            <select
-                              value={booking.status}
-                              onChange={(e) => void handleUpdateStatus(booking.id, e.target.value as BookingStatus)}
-                              className={`border rounded-xl px-4 py-2 text-[10px] font-black uppercase tracking-widest outline-none focus:ring-4 focus:ring-blue-500/10 transition-all cursor-pointer ${getStatusColor(booking.status)}`}
-                            >
-                              <option value="Booking Confirmed">Booking Confirmed</option>
-                              <option value="Phlebotomist Assigned">Phlebotomist Assigned</option>
-                              <option value="Sample Collected">Sample Collected</option>
-                              <option value="Testing">Testing</option>
-                              <option value="Report Ready">Report Ready</option>
-                            </select>
+                          <td className="px-6 py-6 bg-slate-50/50 group-hover:bg-blue-50/30 transition-colors border-y border-slate-50/50">
+                            <div className="relative">
+                              <select
+                                value={booking.status}
+                                onChange={(e) => void handleUpdateStatus(booking.id, e.target.value as BookingStatus)}
+                                className={`appearance-none border-0 rounded-xl px-4 py-2 text-[10px] font-black uppercase tracking-widest outline-none focus:ring-4 focus:ring-blue-500/10 transition-all cursor-pointer shadow-sm w-full ${getStatusColor(booking.status)}`}
+                              >
+                                <option value="Booking Confirmed">Booking Confirmed</option>
+                                <option value="Phlebotomist Assigned">Phlebotomist Assigned</option>
+                                <option value="Sample Collected">Sample Collected</option>
+                                <option value="Testing">Testing</option>
+                                <option value="Report Ready">Report Ready</option>
+                              </select>
+                            </div>
                           </td>
-                          <td className="px-8 py-6">
-                            <div className="flex items-center gap-2">
+                          <td className="px-6 py-6 bg-slate-50/50 group-hover:bg-blue-50/30 transition-colors border-y border-slate-50/50">
+                            <div className="flex items-center gap-3">
                               {booking.report_url ? (
-                                <button onClick={() => void handleDeleteSingleReport(booking.id)} className="flex items-center gap-2 px-3 py-1.5 bg-red-50 text-red-600 rounded-xl border border-red-100 hover:bg-red-600 hover:text-white transition-all text-[10px] font-black uppercase tracking-widest">
-                                   <FileX className="w-3.5 h-3.5" /> Delete Report
+                                <button 
+                                  onClick={() => void handleDeleteSingleReport(booking.id)} 
+                                  className="flex items-center gap-2 px-4 py-2 bg-red-50 text-red-600 rounded-xl border border-red-100/50 hover:bg-red-500 hover:text-white transition-all text-[10px] font-black uppercase tracking-widest shadow-sm active:scale-95"
+                                >
+                                   <FileX className="w-3.5 h-3.5" /> Remove Report
                                 </button>
                               ) : (
-                                <label className="flex items-center gap-2 px-3 py-1.5 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition-all text-[10px] font-black uppercase tracking-widest cursor-pointer shadow-lg shadow-blue-100">
-                                   <UploadCloud className="w-3.5 h-3.5" /> Upload PDF
+                                <label className="flex items-center gap-2 px-4 py-2 bg-[#1E3A8A] text-white rounded-xl hover:bg-blue-800 transition-all text-[10px] font-black uppercase tracking-widest cursor-pointer shadow-lg shadow-blue-900/10 active:scale-95">
+                                   <UploadCloud className="w-3.5 h-3.5" /> Upload Results
                                    <input type="file" accept=".pdf" className="hidden" onChange={(e) => void handleUploadReport(booking.id, e)} />
                                 </label>
                               )}
-                              <Link href={`/track?id=${booking.id}`} className="p-2 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded-xl transition-all">
+                              <Link href={`/track?id=${booking.id}`} target="_blank" className="p-2.5 text-slate-400 hover:text-blue-600 hover:bg-white rounded-xl transition-all border border-transparent hover:border-slate-100 shadow-sm">
                                 <ExternalLink className="w-4 h-4" />
                               </Link>
                             </div>
                           </td>
-                          <td className="px-8 py-6 text-center">
-                            <button onClick={() => setDeleteConfirm({ id: booking.id, name: booking.patient_name })} className="p-3 text-slate-300 hover:text-red-600 hover:bg-red-50 rounded-2xl transition-all">
+                          <td className="px-6 py-6 bg-slate-50/50 group-hover:bg-blue-50/30 rounded-r-[1.5rem] transition-colors border-y border-r border-slate-50/50 text-center">
+                            <button 
+                              onClick={() => setDeleteConfirm({ id: booking.id, name: booking.patient_name })} 
+                              className="p-3 text-slate-300 hover:text-red-500 hover:bg-white rounded-2xl transition-all border border-transparent hover:border-red-100 shadow-sm"
+                            >
                               <Trash2 className="w-5 h-5" />
                             </button>
                           </td>
-                        </tr>
+                        </motion.tr>
                       ))}
                     </tbody>
                   </table>
                 </div>
-              </>
+
+                {/* Mobile View - Polished Card View */}
+                <div className="lg:hidden space-y-4 pt-4">
+                  {filtered.map((booking) => (
+                    <motion.div 
+                      initial={{ opacity: 0, scale: 0.98 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      key={booking.id} 
+                      className="bg-slate-50/50 rounded-[2rem] p-6 border border-slate-100/50 space-y-6"
+                    >
+                      <div className="flex justify-between items-start">
+                        <div className="space-y-1">
+                          <h3 className="font-black text-slate-900 text-xl tracking-tight">{booking.patient_name}</h3>
+                          <div className="flex items-center gap-2">
+                             <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{booking.id}</span>
+                             <span className="text-[10px] font-bold text-slate-300">•</span>
+                             <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{new Date(booking.date).toLocaleDateString()}</span>
+                          </div>
+                        </div>
+                        <button onClick={() => setDeleteConfirm({ id: booking.id, name: booking.patient_name })} className="p-3 bg-white text-red-400 rounded-2xl shadow-sm border border-slate-100"><Trash2 className="w-5 h-5" /></button>
+                      </div>
+
+                      <div className="grid grid-cols-2 gap-3">
+                        <div className="bg-white p-3 rounded-2xl border border-slate-100 shadow-sm">
+                           <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1.5">Assigned Test</p>
+                           <p className="text-xs font-black text-blue-600 truncate uppercase">{booking.test_name}</p>
+                        </div>
+                        <div className="bg-white p-3 rounded-2xl border border-slate-100 shadow-sm">
+                           <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1.5">Current Status</p>
+                           <div className={`text-[9px] font-black uppercase tracking-widest py-1 px-2 rounded-lg inline-block ${getStatusColor(booking.status)}`}>
+                             {booking.status}
+                           </div>
+                        </div>
+                      </div>
+
+                      <div className="space-y-3">
+                         <div className="flex gap-3">
+                            {booking.report_url ? (
+                              <button onClick={() => void handleDeleteSingleReport(booking.id)} className="flex-1 py-4 bg-red-50 text-red-600 rounded-2xl text-[10px] font-black uppercase tracking-widest border border-red-100 active:scale-95 transition-all">
+                                 Delete Report
+                              </button>
+                            ) : (
+                              <label className="flex-1 py-4 bg-slate-900 text-white rounded-2xl text-[10px] font-black uppercase tracking-widest flex items-center justify-center gap-2 active:scale-95 transition-all cursor-pointer">
+                                 <UploadCloud className="w-4 h-4" /> Upload PDF
+                                 <input type="file" accept=".pdf" className="hidden" onChange={(e) => void handleUploadReport(booking.id, e)} />
+                              </label>
+                            )}
+                            <Link href={`/track?id=${booking.id}`} className="p-4 bg-white text-slate-400 rounded-2xl shadow-sm border border-slate-100 flex items-center justify-center aspect-square">
+                               <ExternalLink className="w-5 h-5" />
+                            </Link>
+                         </div>
+                         <select
+                            value={booking.status}
+                            onChange={(e) => void handleUpdateStatus(booking.id, e.target.value as BookingStatus)}
+                            className={`w-full py-4 rounded-2xl text-[10px] font-black uppercase tracking-widest text-center shadow-sm appearance-none outline-none focus:ring-4 focus:ring-blue-500/10 transition-all ${getStatusColor(booking.status)}`}
+                          >
+                            <option value="Booking Confirmed">Booking Confirmed</option>
+                            <option value="Phlebotomist Assigned">Phlebotomist Assigned</option>
+                            <option value="Sample Collected">Sample Collected</option>
+                            <option value="Testing">Testing</option>
+                            <option value="Report Ready">Report Ready</option>
+                          </select>
+                      </div>
+                    </motion.div>
+                  ))}
+                </div>
+              </div>
             )}
           </div>
         </div>
       </main>
 
-      {/* Re-use existing modal code but with premium styling */}
-      <AnimatePresence>
-        {showModal && (
-          <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
-            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={() => setShowModal(false)} className="absolute inset-0 bg-slate-900/60 backdrop-blur-sm" />
-            <motion.div initial={{ scale: 0.95, opacity: 0, y: 20 }} animate={{ scale: 1, opacity: 1, y: 0 }} exit={{ scale: 0.95, opacity: 0, y: 20 }} className="bg-white rounded-[2.5rem] shadow-2xl w-full max-w-xl overflow-hidden relative z-10 border border-slate-100">
-              <div className="bg-[#1E3A8A] p-8 text-white relative overflow-hidden">
-                <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -mr-16 -mt-16 blur-3xl" />
-                <div className="relative z-10">
-                  <h3 className="text-2xl font-black tracking-tight uppercase">New Patient Entry</h3>
-                  <p className="text-blue-200 text-sm font-medium mt-1 uppercase tracking-widest">Fill in the details for manual booking</p>
-                </div>
-                <button onClick={() => setShowModal(false)} className="absolute top-8 right-8 text-white/50 hover:text-white transition-colors"><X className="w-6 h-6" /></button>
-              </div>
-              <form onSubmit={e => { e.preventDefault(); void handleAddBooking(); }} className="p-8 space-y-6">
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                  <div className="space-y-2">
-                    <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Patient Name</label>
-                    <input type="text" required value={form.patient_name} onChange={e => setForm(f => ({...f, patient_name: e.target.value}))} className="w-full bg-slate-50 border-none p-4 rounded-2xl outline-none focus:ring-2 focus:ring-blue-500/20 font-bold text-slate-800" placeholder="Full Name" />
-                  </div>
-                  <div className="space-y-2">
-                    <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Test Name</label>
-                    <input type="text" required value={form.test_name} onChange={e => setForm(f => ({...f, test_name: e.target.value}))} className="w-full bg-slate-50 border-none p-4 rounded-2xl outline-none focus:ring-2 focus:ring-blue-500/20 font-bold text-slate-800" placeholder="e.g. CBC, LFT" />
-                  </div>
-                </div>
-                <div className="space-y-2 text-center pt-4">
-                  <button type="submit" disabled={saving} className="w-full bg-[#1E3A8A] hover:bg-blue-800 text-white py-5 rounded-[1.5rem] font-black uppercase tracking-widest text-sm transition-all shadow-xl shadow-blue-100 active:scale-95 disabled:opacity-50">
-                    {saving ? "Processing..." : "Confirm Booking"}
-                  </button>
-                  <p className="text-[10px] font-bold text-slate-400 uppercase tracking-tighter pt-2 flex items-center justify-center gap-1.5">
-                    <ShieldCheck className="w-3 h-3" /> Secure Patient Data Management
-                  </p>
-                </div>
-              </form>
-            </motion.div>
-          </div>
-        )}
-      </AnimatePresence>
+      {/* Decorative footer text */}
+      <div className="text-center pb-10 text-slate-300 font-bold text-[10px] uppercase tracking-[0.5em]">
+        Arush Diagnostics Cloud Infrastructure • Secure Access
+      </div>
     </div>
   );
 }
