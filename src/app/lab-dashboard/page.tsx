@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { supabase, DEMO_BOOKING_DB, BookingRecord, BookingStatus } from "@/lib/supabase";
-import { Beaker, Search, RefreshCw, X, Plus, Copy, Check, Trash2, ExternalLink, Clock, Phone, MapPin, UploadCloud, FileX } from "lucide-react";
+import { Beaker, Search, RefreshCw, X, Plus, Copy, Check, Trash2, ExternalLink, Clock, Phone, MapPin, UploadCloud, FileX, ShieldCheck, Lock, ArrowRight } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
 
@@ -217,28 +217,79 @@ export default function AdminDashboard() {
 
   if (!isAuthenticated) {
     return (
-      <div className="min-h-screen bg-slate-50 flex items-center justify-center p-4">
-        <form onSubmit={handleLogin} className="bg-white p-8 rounded-2xl shadow-xl w-full max-w-md border border-slate-100">
-          <div className="flex items-center justify-center gap-2 mb-8 text-[#1E3A8A]">
-            <Beaker className="w-8 h-8" />
-            <h1 className="text-2xl font-bold">ARUSH Admin</h1>
+      <div className="min-h-screen bg-[#0F172A] flex items-center justify-center p-4 relative overflow-hidden">
+        {/* Animated Background Elements */}
+        <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-blue-600/20 rounded-full blur-[120px] animate-pulse" />
+        <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-teal-600/20 rounded-full blur-[120px] animate-pulse" style={{ animationDelay: '2s' }} />
+        
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="w-full max-w-md relative z-10"
+        >
+          {/* Brand Logo */}
+          <div className="flex flex-col items-center mb-10">
+            <motion.div 
+              initial={{ scale: 0.8 }}
+              animate={{ scale: 1 }}
+              transition={{ type: "spring", stiffness: 200, damping: 15 }}
+              className="bg-white/10 p-4 rounded-3xl backdrop-blur-xl border border-white/20 mb-4 shadow-2xl"
+            >
+              <Beaker className="w-12 h-12 text-blue-400" />
+            </motion.div>
+            <h1 className="text-white text-3xl font-black tracking-tighter flex items-center gap-2">
+              ARUSH <span className="text-blue-400">ADMIN</span>
+            </h1>
+            <p className="text-slate-400 font-medium text-sm mt-2 tracking-widest uppercase">Security Portal</p>
           </div>
-          <div className="space-y-4">
-            <div>
-              <label className="text-sm font-semibold text-slate-700">Master Password</label>
-              <input
-                type="password"
-                value={password}
-                onChange={e => setPassword(e.target.value)}
-                className="w-full mt-1 p-3 border rounded-xl focus:ring-2 focus:ring-blue-500 outline-none"
-                placeholder="Enter password..."
-              />
+
+          <form 
+            onSubmit={handleLogin} 
+            className="bg-white/5 backdrop-blur-3xl p-8 rounded-[2.5rem] shadow-[0_32px_64px_-15px_rgba(0,0,0,0.5)] border border-white/10 relative overflow-hidden group"
+          >
+            {/* Subtle light streak */}
+            <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-blue-500/50 to-transparent opacity-50" />
+
+            <div className="space-y-6">
+              <div>
+                <label className="text-xs font-bold text-slate-400 uppercase tracking-widest ml-1 mb-2 block">
+                  Confidential Access
+                </label>
+                <div className="relative group/input">
+                  <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-500 group-focus-within/input:text-blue-400 transition-colors" />
+                  <input
+                    type="password"
+                    value={password}
+                    onChange={e => setPassword(e.target.value)}
+                    className="w-full bg-slate-900/50 border border-white/10 text-white p-4 pl-12 rounded-2xl outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 transition-all placeholder:text-slate-600 font-medium"
+                    placeholder="Master Password"
+                  />
+                </div>
+              </div>
+
+              <motion.button 
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                type="submit" 
+                className="w-full bg-gradient-to-r from-blue-600 to-teal-600 hover:from-blue-500 hover:to-teal-500 text-white py-4 rounded-2xl text-lg font-black transition-all shadow-xl shadow-blue-900/20 flex items-center justify-center gap-2 group/btn"
+              >
+                Access Dashboard
+                <ArrowRight className="w-5 h-5 group-hover/btn:translate-x-1 transition-transform" />
+              </motion.button>
             </div>
-            <button type="submit" className="w-full bg-[#1E3A8A] hover:bg-blue-800 text-white py-4 rounded-xl text-lg font-bold transition-all active:scale-95 shadow-lg">
-              Login to Dashboard
-            </button>
-          </div>
-        </form>
+
+            <div className="mt-8 flex items-center justify-center gap-4 py-4 border-t border-white/5">
+              <div className="flex items-center gap-1.5 text-[10px] font-bold text-slate-500 uppercase tracking-tighter">
+                <ShieldCheck className="w-3 h-3 text-emerald-500" />
+                End-to-End Encrypted
+              </div>
+            </div>
+          </form>
+
+          <p className="text-center mt-8 text-slate-600 text-xs font-medium">
+            Authorized Personnel Only • &copy; 2026 ARUSH Lab
+          </p>
+        </motion.div>
       </div>
     );
   }
