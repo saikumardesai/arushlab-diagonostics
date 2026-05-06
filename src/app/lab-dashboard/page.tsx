@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { supabase, DEMO_BOOKING_DB, BookingRecord, BookingStatus } from "@/lib/supabase";
-import { Beaker, Search, RefreshCw, X, Plus, Copy, Check, Trash2, ExternalLink, Clock, Phone, MapPin, UploadCloud, FileX, ShieldCheck, Lock, ArrowRight, LayoutDashboard, IndianRupee, PlusCircle } from "lucide-react";
+import { Beaker, Search, RefreshCw, X, Plus, Copy, Check, Trash2, ExternalLink, Clock, Phone, MapPin, UploadCloud, FileX, ShieldCheck, Lock, ArrowRight } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
 
@@ -21,27 +21,6 @@ export default function AdminDashboard() {
   const [deleteConfirm, setDeleteConfirm] = useState<{id: string, name: string} | null>(null);
   const [copiedId, setCopiedId] = useState<string | null>(null);
   const [uploadingId, setUploadingId] = useState<string | null>(null);
-  const [activeTab, setActiveTab] = useState<'bookings' | 'pricing'>('bookings');
-  
-  // Pricing state
-  const [tests, setTests] = useState<{id: number, name: string, price: number}[]>([]);
-  const [fetchingTests, setFetchingTests] = useState(false);
-  const [showTestModal, setShowTestModal] = useState(false);
-  const [testForm, setTestForm] = useState({ name: "", price: "" });
-
-  const fetchTests = useCallback(async () => {
-    if (!supabase) return;
-    setFetchingTests(true);
-    try {
-      const { data, error } = await supabase.from('tests').select('*').order('name');
-      if (error) throw error;
-      setTests(data || []);
-    } catch (e: any) {
-      console.error(e.message);
-    } finally {
-      setFetchingTests(false);
-    }
-  }, []);
 
   const handleUploadReport = async (bookingId: string, event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -129,35 +108,35 @@ export default function AdminDashboard() {
   }));
   const [saving, setSaving] = useState(false);
 
-  const handleAddTest = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!supabase) return;
+  const handleAddBooking = async () => {
     setSaving(true);
     try {
-      const { error } = await supabase.from('tests').insert([{ 
-        name: testForm.name, 
-        price: parseFloat(testForm.price) 
-      }]);
-      if (error) throw error;
-      alert("Test added successfully!");
-      setTestForm({ name: "", price: "" });
-      setShowTestModal(false);
-      await fetchTests();
+      if (supabase) {
+        const { error } = await supabase.from('bookings').insert([{
+          ...form,
+          date: new Date().toISOString()
+        }]);
+        if (error) throw error;
+      } else {
+        const localData = localStorage.getItem('arush_mock_bookings');
+        const db = localData ? JSON.parse(localData) : DEMO_BOOKING_DB;
+        const newRecord = { ...form, date: new Date().toISOString() };
+        localStorage.setItem('arush_mock_bookings', JSON.stringify([newRecord, ...db]));
+      }
+      alert("Patient added successfully!");
+      setShowModal(false);
+      setForm({
+        id: generateId(),
+        patient_name: "",
+        test_name: "",
+        phlebotomist_name: "",
+        status: "Booking Confirmed" as BookingStatus,
+      });
+      await fetchBookings();
     } catch (e: any) {
-      alert("Error: " + e.message);
+      alert("Failed: " + e.message);
     } finally {
       setSaving(false);
-    }
-  };
-
-  const handleDeleteTest = async (id: number) => {
-    if (!supabase || !confirm("Delete this test from the price list?")) return;
-    try {
-      const { error } = await supabase.from('tests').delete().eq('id', id);
-      if (error) throw error;
-      setTests(prev => prev.filter(t => t.id !== id));
-    } catch (e: any) {
-      alert("Error: " + e.message);
     }
   };
 
@@ -203,9 +182,8 @@ export default function AdminDashboard() {
   useEffect(() => {
     if (isAuthenticated) {
       void fetchBookings();
-      void fetchTests();
     }
-  }, [isAuthenticated, fetchBookings, fetchTests]);
+  }, [isAuthenticated, fetchBookings]);
 
   const handleUpdateStatus = async (id: string, newStatus: BookingStatus) => {
     // Optimistic UI update
@@ -410,378 +388,234 @@ export default function AdminDashboard() {
             </motion.div>
           </div>
         )}
-      </AnimatePresence>      {/* Responsive Header */}
-      <header className="bg-white border-b border-slate-200 px-4 sm:px-6 py-3 sm:py-4 sticky top-0 z-50">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2 text-[#1E3A8A]">
-            <Beaker className="w-5 h-5 sm:w-6 sm:h-6" />
-            <h1 className="text-base sm:text-xl font-bold tracking-tight">Admin Portal</h1>
+      </AnimatePresence>
+
+      {/* Premium Header */}
+      <header className="bg-white/80 backdrop-blur-md border-b border-slate-200 px-4 sm:px-8 py-4 sticky top-0 z-50 shadow-sm">
+        <div className="max-w-7xl mx-auto flex items-center justify-between">
+          <div className="flex items-center gap-3 text-[#1E3A8A]">
+            <div className="bg-blue-600 p-2 rounded-xl shadow-lg shadow-blue-200">
+              <Beaker className="w-5 h-5 text-white" />
+            </div>
+            <h1 className="text-xl font-black tracking-tight uppercase">Admin <span className="text-blue-600">Portal</span></h1>
           </div>
           
-          <nav className="flex items-center bg-slate-100 p-1 rounded-xl">
-             <button 
-                onClick={() => setActiveTab('bookings')}
-                className={`px-4 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 ${activeTab === 'bookings' ? 'bg-white text-blue-600 shadow-sm' : 'text-slate-500 hover:text-slate-800'}`}
-             >
-                <LayoutDashboard className="w-3.5 h-3.5" /> Bookings
-             </button>
-             <button 
-                onClick={() => setActiveTab('pricing')}
-                className={`px-4 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 ${activeTab === 'pricing' ? 'bg-white text-blue-600 shadow-sm' : 'text-slate-500 hover:text-slate-800'}`}
-             >
-                <IndianRupee className="w-3.5 h-3.5" /> Pricing
-             </button>
-          </nav>
-
-          <div className="flex items-center gap-2 sm:gap-4">
-            <button className="text-sm font-bold text-red-500 hover:text-red-700 bg-red-50 px-3 py-1.5 rounded-lg transition-colors" onClick={() => setIsAuthenticated(false)}>Logout</button>
+          <div className="flex items-center gap-4">
+            <div className="hidden md:flex items-center gap-2 px-3 py-1.5 bg-slate-100 rounded-full">
+              <div className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse" />
+              <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest">System Live</span>
+            </div>
+            <button 
+              className="text-sm font-bold text-red-500 hover:text-red-700 bg-red-50 hover:bg-red-100 px-4 py-2 rounded-xl transition-all active:scale-95 border border-red-100" 
+              onClick={() => setIsAuthenticated(false)}
+            >
+              Logout
+            </button>
           </div>
         </div>
       </header>
 
-      <main className="max-w-7xl mx-auto p-3 sm:p-4 lg:p-6 mt-2">
-        <AnimatePresence mode="wait">
-          {activeTab === 'bookings' ? (
-            <motion.div 
-              key="bookings"
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: 20 }}
-              className="bg-white rounded-xl sm:rounded-2xl shadow-sm border border-slate-200 overflow-hidden"
-            >
-              {/* Responsive Toolbar */}
-              <div className="p-3 sm:p-4 lg:p-6 border-b border-slate-100 bg-slate-50/50">
-                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-                  <h2 className="text-base sm:text-lg font-semibold text-slate-800 uppercase tracking-tight">Patient Bookings ({filtered.length})</h2>
-                  <div className="flex gap-2 sm:gap-3">
-                    <div className="relative flex-1 sm:flex-none">
-                      <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
-                      <input
-                        type="text"
-                        value={search}
-                        onChange={e => setSearch(e.target.value)}
-                        placeholder="Search patients..."
-                        className="w-full sm:w-56 pl-9 pr-4 py-2.5 sm:py-2 border rounded-xl sm:rounded-lg text-sm outline-none focus:ring-2 focus:ring-blue-500"
-                      />
-                    </div>
-                    <button className="gap-2 px-3 py-2 bg-blue-600 text-white border border-blue-700 rounded-xl sm:rounded-lg hover:bg-blue-700 flex items-center text-sm font-bold transition-all flex-shrink-0 active:scale-95" onClick={() => setShowModal(true)}>
-                      <Plus className="w-4 h-4" />
-                      <span className="hidden sm:inline">Add Patient</span>
-                    </button>
-                  </div>
-                </div>
+      <main className="max-w-7xl mx-auto p-4 sm:p-8">
+        <div className="bg-white rounded-[2rem] shadow-[0_20px_50px_-12px_rgba(0,0,0,0.05)] border border-slate-100 overflow-hidden">
+          {/* Dashboard Toolbar */}
+          <div className="p-6 sm:p-8 border-b border-slate-50 bg-slate-50/30">
+            <div className="flex flex-col lg:row sm:flex-row sm:items-center sm:justify-between gap-6">
+              <div>
+                <h2 className="text-2xl font-black text-slate-800 tracking-tight">Patient Database</h2>
+                <p className="text-slate-500 font-medium text-sm mt-1">{filtered.length} active records found</p>
               </div>
-
-              {/* Content */}
-              {loading ? (
-                <div className="flex items-center justify-center py-16 text-slate-400 gap-2">
-                  <RefreshCw className="w-5 h-5 animate-spin" /> Loading...
+              
+              <div className="flex flex-col sm:flex-row gap-3">
+                <div className="relative group">
+                  <Search className="w-4 h-4 absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-blue-600 transition-colors" />
+                  <input
+                    type="text"
+                    value={search}
+                    onChange={e => setSearch(e.target.value)}
+                    placeholder="Search by name or ID..."
+                    className="w-full sm:w-72 pl-11 pr-4 py-3 bg-slate-100/50 border border-transparent rounded-2xl text-sm outline-none focus:ring-2 focus:ring-blue-500/20 focus:bg-white focus:border-blue-500/20 transition-all placeholder:text-slate-400 font-medium"
+                  />
                 </div>
-              ) : filtered.length === 0 ? (
-                <div className="flex flex-col items-center justify-center py-16 text-slate-400 px-4">
-                  <p className="font-medium text-center">No patients found.</p>
-                  <p className="text-sm mt-1 text-center">Customers can book tests directly on the website.</p>
+                <button 
+                  className="px-6 py-3 bg-blue-600 text-white rounded-2xl hover:bg-blue-700 flex items-center justify-center gap-2 text-sm font-black transition-all shadow-xl shadow-blue-200 active:scale-95" 
+                  onClick={() => setShowModal(true)}
+                >
+                  <Plus className="w-5 h-5" />
+                  Add New Patient
+                </button>
+              </div>
+            </div>
+          </div>
+
+          {/* Content */}
+          <div className="min-h-[400px]">
+            {loading ? (
+              <div className="flex flex-col items-center justify-center py-32 text-slate-400 gap-4">
+                <RefreshCw className="w-10 h-10 animate-spin text-blue-500" />
+                <p className="font-bold tracking-widest uppercase text-xs">Synchronizing Data...</p>
+              </div>
+            ) : filtered.length === 0 ? (
+              <div className="flex flex-col items-center justify-center py-32 text-slate-400 px-4 text-center">
+                <div className="bg-slate-50 p-6 rounded-full mb-4">
+                   <Search className="w-12 h-12 text-slate-200" />
                 </div>
-              ) : (
-                <>
-                  {/* ===== MOBILE & TABLET: Card Layout (shown below lg) ===== */}
-                  <div className="lg:hidden divide-y divide-slate-100">
-                    {filtered.map((booking) => (
-                      <div key={booking.id} className="p-4 sm:p-5 hover:bg-blue-50/20 transition-colors">
-                        {/* Card Header: Patient name + actions */}
-                        <div className="flex items-start justify-between gap-3 mb-3">
-                          <div className="flex-1 min-w-0">
-                            <h3 className="font-bold text-slate-800 text-base truncate">{booking.patient_name}</h3>
-                            <div className="flex items-center gap-2 mt-1">
-                              <span className="text-[10px] font-bold text-slate-400 uppercase tracking-tight">{booking.id}</span>
-                              <span className="text-xs text-slate-400 flex items-center gap-1 font-medium">
-                                <Clock className="w-3 h-3" />
-                                {new Date(booking.date).toLocaleDateString('en-IN', { day: 'numeric', month: 'short' })}
-                              </span>
-                            </div>
-                          </div>
-                          <div className="flex items-center gap-1 flex-shrink-0">
-                            <Link 
-                              href={`/track?id=${booking.id}`}
-                              className="p-2 bg-blue-50 text-blue-600 rounded-lg hover:bg-blue-600 hover:text-white transition-all border border-blue-100"
-                              title="Track"
-                            >
-                              <ExternalLink className="w-4 h-4" />
-                            </Link>
-                            {booking.report_url ? (
-                              <button 
-                                onClick={() => void handleDeleteSingleReport(booking.id)}
-                                disabled={uploadingId === booking.id}
-                                className="p-2 text-red-600 bg-red-50 rounded-lg border border-red-200 hover:bg-red-600 hover:text-white transition-all"
-                                title="Delete Report"
-                              >
-                                 {uploadingId === booking.id ? <RefreshCw className="w-4 h-4 animate-spin" /> : <FileX className="w-4 h-4" />}
-                              </button>
-                            ) : (
-                              <label className="p-2 bg-indigo-50 text-indigo-600 rounded-lg hover:bg-indigo-600 hover:text-white transition-all border border-indigo-100 cursor-pointer" title="Upload PDF Report">
-                                 {uploadingId === booking.id ? <RefreshCw className="w-4 h-4 animate-spin" /> : <UploadCloud className="w-4 h-4" />}
-                                 <input type="file" accept=".pdf" className="hidden" disabled={uploadingId === booking.id} onChange={(e) => void handleUploadReport(booking.id, e)} />
-                              </label>
-                            )}
-                            <button 
-                              onClick={() => setDeleteConfirm({ id: booking.id, name: booking.patient_name })}
-                              className="p-2 text-red-400 hover:text-red-700 hover:bg-red-50 rounded-lg transition-all"
-                              title="Delete"
-                            >
-                              <Trash2 className="w-4 h-4" />
-                            </button>
+                <p className="font-bold text-slate-800 text-lg">No records matched your search</p>
+                <p className="text-sm mt-1 font-medium">Try searching for a different patient name or ID.</p>
+              </div>
+            ) : (
+              <>
+                {/* Mobile View */}
+                <div className="md:hidden divide-y divide-slate-50">
+                  {filtered.map((booking) => (
+                    <div key={booking.id} className="p-6 hover:bg-blue-50/30 transition-colors">
+                      <div className="flex justify-between items-start mb-4">
+                        <div>
+                          <h3 className="font-black text-slate-800 text-lg leading-tight">{booking.patient_name}</h3>
+                          <div className="flex items-center gap-2 mt-1">
+                            <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{booking.id}</span>
+                            <div className="w-1 h-1 bg-slate-300 rounded-full" />
+                            <span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">{new Date(booking.date).toLocaleDateString()}</span>
                           </div>
                         </div>
-
-                        {/* Test Name Badge */}
-                        <div className="mb-3">
-                          <span className="font-bold text-slate-700 bg-blue-50 px-2.5 py-1 rounded-lg text-xs inline-block border border-blue-100">
-                            {booking.test_name}
-                          </span>
-                        </div>
-
-                        {/* Contact Info */}
-                        <div className="flex flex-col sm:flex-row gap-2 sm:gap-4 mb-3 text-xs">
-                          <div className="flex items-center gap-2 text-slate-600 font-semibold">
-                            <span className="bg-slate-100 p-1 rounded-md"><Phone className="w-3 h-3" /></span>
-                            <span>{booking.phone || "No Phone"}</span>
-                          </div>
-                          <div className="flex items-start gap-2 text-slate-500 font-medium">
-                            <span className="bg-slate-100 p-1 rounded-md flex-shrink-0"><MapPin className="w-3 h-3" /></span>
-                            <span className="break-words leading-relaxed line-clamp-2">{booking.address || "No Address"}</span>
-                          </div>
-                        </div>
-
-                        {/* Status Selector */}
-                        <div className="flex items-center gap-2">
-                          <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Status:</span>
-                          <select
-                            value={booking.status}
-                            onChange={(e) => void handleUpdateStatus(booking.id, e.target.value as BookingStatus)}
-                            disabled={saving}
-                            className={`flex-1 border rounded-lg px-3 py-2 text-xs font-bold outline-none focus:ring-2 focus:ring-blue-500 transition-all cursor-pointer ${getStatusColor(booking.status)}`}
-                          >
-                            <option value="Booking Confirmed">Booking Confirmed</option>
-                            <option value="Phlebotomist Assigned">Phlebotomist Assigned</option>
-                            <option value="Sample Collected">Sample Collected</option>
-                            <option value="Testing">Testing</option>
-                            <option value="Report Ready">Report Ready</option>
-                          </select>
+                        <div className="flex gap-2">
+                           <button onClick={() => setDeleteConfirm({ id: booking.id, name: booking.patient_name })} className="p-2 text-red-400 hover:text-red-600 bg-red-50 rounded-lg transition-all"><Trash2 className="w-4 h-4" /></button>
                         </div>
                       </div>
-                    ))}
-                  </div>
+                      <div className="flex flex-wrap gap-2 mb-4">
+                        <span className="px-3 py-1 bg-blue-50 text-blue-700 rounded-lg text-[10px] font-black uppercase tracking-widest border border-blue-100">{booking.test_name}</span>
+                        <span className={`px-3 py-1 rounded-lg text-[10px] font-black uppercase tracking-widest border ${getStatusColor(booking.status)}`}>{booking.status}</span>
+                      </div>
+                      <div className="grid grid-cols-2 gap-4">
+                        <label className="flex flex-col gap-1 cursor-pointer">
+                           <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Report</span>
+                           <div className="flex items-center gap-2 p-3 bg-slate-50 rounded-xl border border-slate-100">
+                              {booking.report_url ? <Check className="w-4 h-4 text-emerald-500" /> : <UploadCloud className="w-4 h-4 text-blue-500" />}
+                              <span className="text-xs font-bold text-slate-700">{booking.report_url ? "Uploaded" : "Upload"}</span>
+                              <input type="file" accept=".pdf" className="hidden" onChange={(e) => void handleUploadReport(booking.id, e)} />
+                           </div>
+                        </label>
+                        <Link href={`/track?id=${booking.id}`} className="flex flex-col gap-1">
+                           <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Tracking</span>
+                           <div className="flex items-center gap-2 p-3 bg-slate-50 rounded-xl border border-slate-100">
+                              <ExternalLink className="w-4 h-4 text-blue-500" />
+                              <span className="text-xs font-bold text-slate-700">Open</span>
+                           </div>
+                        </Link>
+                      </div>
+                    </div>
+                  ))}
+                </div>
 
-                  {/* ===== DESKTOP: Table Layout (shown at lg and above) ===== */}
-                  <div className="hidden lg:block overflow-x-auto">
-                    <table className="w-full text-left text-sm">
-                      <thead className="bg-slate-50 text-slate-600 font-medium">
-                        <tr>
-                          <th className="px-6 py-4 font-bold text-[#1E3A8A]">Patient Details</th>
-                          <th className="px-6 py-4 font-bold text-[#1E3A8A]">Test Details</th>
-                          <th className="px-6 py-4 font-bold text-[#1E3A8A]">Contact & Location</th>
-                          <th className="px-6 py-4 font-bold text-[#1E3A8A]">Status</th>
-                          <th className="px-6 py-4 font-bold text-[#1E3A8A] text-center">Track</th>
-                          <th className="px-6 py-4 font-bold text-[#1E3A8A] text-center">Report</th>
-                          <th className="px-6 py-4 font-bold text-red-600 text-center">Action</th>
-                        </tr>
-                      </thead>
-                      <tbody className="divide-y divide-slate-100">
-                        {filtered.map((booking) => (
-                          <tr key={booking.id} className="hover:bg-blue-50/30 transition-colors group">
-                            <td className="px-6 py-5">
-                              <div className="flex flex-col">
-                                <span className="font-bold text-slate-800 text-base">{booking.patient_name}</span>
-                                <span className="text-[10px] font-bold text-slate-400 uppercase tracking-tighter mt-0.5">{booking.id}</span>
-                                <span className="text-xs text-slate-400 flex items-center gap-1 mt-1 font-medium">
-                                  <Clock className="w-3 h-3" />
-                                  {new Date(booking.date).toLocaleDateString('en-IN', { day: 'numeric', month: 'short' })}
-                                </span>
+                {/* Desktop View */}
+                <div className="hidden md:block overflow-x-auto">
+                  <table className="w-full text-left">
+                    <thead>
+                      <tr className="bg-slate-50/50 text-slate-400 text-[10px] font-black uppercase tracking-widest border-b border-slate-50">
+                        <th className="px-8 py-5">Patient & Details</th>
+                        <th className="px-8 py-5">Assigned Test</th>
+                        <th className="px-8 py-5">Status Tracking</th>
+                        <th className="px-8 py-5">Report Access</th>
+                        <th className="px-8 py-5 text-center">Delete</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-slate-50">
+                      {filtered.map((booking) => (
+                        <tr key={booking.id} className="hover:bg-blue-50/20 transition-colors group">
+                          <td className="px-8 py-6">
+                            <div className="flex flex-col">
+                              <span className="font-black text-slate-800 text-base group-hover:text-blue-700 transition-colors">{booking.patient_name}</span>
+                              <div className="flex items-center gap-2 mt-1">
+                                <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{booking.id}</span>
+                                <div className="w-1 h-1 bg-slate-300 rounded-full" />
+                                <span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest leading-none">{new Date(booking.date).toLocaleDateString()}</span>
                               </div>
-                            </td>
-                            <td className="px-6 py-5">
-                              <span className="font-bold text-slate-700 bg-blue-50 px-2 py-1 rounded-md text-[13px] inline-block">
-                                {booking.test_name}
-                              </span>
-                            </td>
-                            <td className="px-6 py-5">
-                              <div className="flex flex-col gap-1.5 max-w-[220px]">
-                                <div className="flex items-center gap-2 text-slate-600 font-semibold group-hover:text-blue-700 transition-colors">
-                                  <span className="bg-slate-100 p-1 rounded-md"><Phone className="w-3 h-3" /></span>
-                                  <span className="text-xs">{booking.phone || "No Phone"}</span>
-                                </div>
-                                <div className="flex items-start gap-2 text-slate-500 font-medium">
-                                  <span className="bg-slate-100 p-1 rounded-md flex-shrink-0 mt-0.5"><MapPin className="w-3 h-3" /></span>
-                                  <span className="text-xs break-words leading-relaxed">{booking.address || "No Address"}</span>
-                                </div>
-                              </div>
-                            </td>
-                            <td className="px-6 py-5">
-                              <select
-                                value={booking.status}
-                                onChange={(e) => void handleUpdateStatus(booking.id, e.target.value as BookingStatus)}
-                                disabled={saving}
-                                className={`border rounded-lg px-3 py-2 text-xs font-bold outline-none focus:ring-2 focus:ring-blue-500 transition-all cursor-pointer ${getStatusColor(booking.status)}`}
-                              >
-                                <option value="Booking Confirmed">Booking Confirmed</option>
-                                <option value="Phlebotomist Assigned">Phlebotomist Assigned</option>
-                                <option value="Sample Collected">Sample Collected</option>
-                                <option value="Testing">Testing</option>
-                                <option value="Report Ready">Report Ready</option>
-                              </select>
-                            </td>
-                            <td className="px-6 py-5 text-center">
-                              <Link 
-                                href={`/track?id=${booking.id}`}
-                                className="inline-flex items-center justify-center p-2.5 bg-blue-50 text-blue-600 rounded-xl hover:bg-blue-600 hover:text-white transition-all shadow-sm border border-blue-100"
-                                title="Open Tracking Page"
-                              >
+                            </div>
+                          </td>
+                          <td className="px-8 py-6">
+                            <span className="px-3 py-1.5 bg-blue-50 text-blue-700 rounded-xl text-[10px] font-black uppercase tracking-widest border border-blue-100">
+                              {booking.test_name}
+                            </span>
+                          </td>
+                          <td className="px-8 py-6">
+                            <select
+                              value={booking.status}
+                              onChange={(e) => void handleUpdateStatus(booking.id, e.target.value as BookingStatus)}
+                              className={`border rounded-xl px-4 py-2 text-[10px] font-black uppercase tracking-widest outline-none focus:ring-4 focus:ring-blue-500/10 transition-all cursor-pointer ${getStatusColor(booking.status)}`}
+                            >
+                              <option value="Booking Confirmed">Booking Confirmed</option>
+                              <option value="Phlebotomist Assigned">Phlebotomist Assigned</option>
+                              <option value="Sample Collected">Sample Collected</option>
+                              <option value="Testing">Testing</option>
+                              <option value="Report Ready">Report Ready</option>
+                            </select>
+                          </td>
+                          <td className="px-8 py-6">
+                            <div className="flex items-center gap-2">
+                              {booking.report_url ? (
+                                <button onClick={() => void handleDeleteSingleReport(booking.id)} className="flex items-center gap-2 px-3 py-1.5 bg-red-50 text-red-600 rounded-xl border border-red-100 hover:bg-red-600 hover:text-white transition-all text-[10px] font-black uppercase tracking-widest">
+                                   <FileX className="w-3.5 h-3.5" /> Delete Report
+                                </button>
+                              ) : (
+                                <label className="flex items-center gap-2 px-3 py-1.5 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition-all text-[10px] font-black uppercase tracking-widest cursor-pointer shadow-lg shadow-blue-100">
+                                   <UploadCloud className="w-3.5 h-3.5" /> Upload PDF
+                                   <input type="file" accept=".pdf" className="hidden" onChange={(e) => void handleUploadReport(booking.id, e)} />
+                                </label>
+                              )}
+                              <Link href={`/track?id=${booking.id}`} className="p-2 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded-xl transition-all">
                                 <ExternalLink className="w-4 h-4" />
                               </Link>
-                            </td>
-                            <td className="px-6 py-5 text-center">
-                               {booking.report_url ? (
-                                <button 
-                                  onClick={() => void handleDeleteSingleReport(booking.id)}
-                                  disabled={uploadingId === booking.id}
-                                  className="inline-flex items-center justify-center p-2.5 px-3 bg-red-50 text-red-600 rounded-xl border border-red-200 hover:bg-red-600 hover:text-white transition-all"
-                                  title="Delete This Report"
-                                >
-                                   {uploadingId === booking.id ? <RefreshCw className="w-4 h-4 animate-spin" /> : <><FileX className="w-4 h-4 mr-1" /> <span className="text-[10px] font-bold uppercase tracking-tight">Delete</span></>}
-                                </button>
-                               ) : (
-                                <label className="inline-flex items-center justify-center p-2.5 bg-indigo-50 text-indigo-600 rounded-xl hover:bg-indigo-600 hover:text-white transition-all shadow-sm border border-indigo-100 cursor-pointer" title="Upload PDF Report">
-                                  {uploadingId === booking.id ? <RefreshCw className="w-4 h-4 animate-spin" /> : <UploadCloud className="w-4 h-4" />}
-                                  <input type="file" accept=".pdf" className="hidden" disabled={uploadingId === booking.id} onChange={(e) => void handleUploadReport(booking.id, e)} />
-                                </label>
-                               )}
-                            </td>
-                            <td className="px-6 py-5 text-center">
-                              <button 
-                                onClick={() => setDeleteConfirm({ id: booking.id, name: booking.patient_name })}
-                                className="p-2.5 text-red-400 hover:text-red-700 hover:bg-red-50 rounded-xl transition-all"
-                                title="Delete Booking"
-                              >
-                                <Trash2 className="w-5 h-5" />
-                              </button>
-                            </td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
-                </>
-              )}
-            </motion.div>
-          ) : (
-            <motion.div 
-              key="pricing"
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: -20 }}
-              className="bg-white rounded-xl sm:rounded-2xl shadow-sm border border-slate-200 overflow-hidden"
-            >
-               <div className="p-4 sm:p-6 border-b border-slate-100 bg-slate-50/50 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-                  <div>
-                    <h2 className="text-lg font-bold text-slate-800">Test Pricing Management</h2>
-                    <p className="text-sm text-slate-500">Add or remove tests from your public website list.</p>
-                  </div>
-                  <button 
-                    onClick={() => setShowTestModal(true)}
-                    className="flex items-center gap-2 px-5 py-2.5 bg-emerald-600 text-white rounded-xl font-bold hover:bg-emerald-700 transition-all shadow-lg shadow-emerald-200 active:scale-95"
-                  >
-                    <PlusCircle className="w-5 h-5" /> Add New Test
-                  </button>
-               </div>
-
-               <div className="overflow-x-auto">
-                 <table className="w-full text-left text-sm">
-                   <thead className="bg-slate-50/80 text-slate-600">
-                     <tr>
-                       <th className="px-6 py-4 font-bold">Test Name</th>
-                       <th className="px-6 py-4 font-bold">Category</th>
-                       <th className="px-6 py-4 font-bold">Price (₹)</th>
-                       <th className="px-6 py-4 font-bold text-center">Actions</th>
-                     </tr>
-                   </thead>
-                   <tbody className="divide-y divide-slate-100">
-                     {fetchingTests ? (
-                       <tr>
-                         <td colSpan={4} className="px-6 py-12 text-center text-slate-400">
-                           <RefreshCw className="w-6 h-6 animate-spin mx-auto mb-2" />
-                           Fetching live price list...
-                         </td>
-                       </tr>
-                     ) : tests.length === 0 ? (
-                       <tr>
-                         <td colSpan={4} className="px-6 py-12 text-center text-slate-400">
-                           No tests found in database. Click &quot;Add New Test&quot; to start.
-                         </td>
-                       </tr>
-                     ) : tests.map(test => (
-                       <tr key={test.id} className="hover:bg-slate-50/50">
-                         <td className="px-6 py-4 font-bold text-slate-800">{test.name}</td>
-                         <td className="px-6 py-4 text-slate-500 font-medium text-xs">General</td>
-                         <td className="px-6 py-4 font-black text-blue-600 text-base">₹{test.price}</td>
-                         <td className="px-6 py-4 text-center">
-                            <button 
-                              onClick={() => void handleDeleteTest(test.id)}
-                              className="p-2 text-red-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-all"
-                            >
-                              <Trash2 className="w-4 h-4" />
+                            </div>
+                          </td>
+                          <td className="px-8 py-6 text-center">
+                            <button onClick={() => setDeleteConfirm({ id: booking.id, name: booking.patient_name })} className="p-3 text-slate-300 hover:text-red-600 hover:bg-red-50 rounded-2xl transition-all">
+                              <Trash2 className="w-5 h-5" />
                             </button>
-                         </td>
-                       </tr>
-                     ))}
-                   </tbody>
-                 </table>
-               </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </>
+            )}
+          </div>
+        </div>
       </main>
 
-      {/* Add Test Modal */}
+      {/* Re-use existing modal code but with premium styling */}
       <AnimatePresence>
-        {showTestModal && (
+        {showModal && (
           <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
-            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={() => setShowTestModal(false)} className="absolute inset-0 bg-slate-900/60 backdrop-blur-sm" />
-            <motion.div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.9, opacity: 0 }} className="bg-white rounded-[2rem] shadow-2xl w-full max-w-md overflow-hidden relative z-10 border border-slate-200">
-               <div className="bg-emerald-600 p-6 text-white flex justify-between items-center">
-                  <h3 className="text-xl font-bold">Add New Diagnostic Test</h3>
-                  <button onClick={() => setShowTestModal(false)}><X className="w-6 h-6" /></button>
-               </div>
-               <form onSubmit={handleAddTest} className="p-6 space-y-4">
-                  <div>
-                    <label className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1 block">Test Title</label>
-                    <input 
-                      type="text" 
-                      required 
-                      value={testForm.name}
-                      onChange={e => setTestForm(prev => ({...prev, name: e.target.value}))}
-                      className="w-full bg-slate-50 border border-slate-100 p-3.5 rounded-xl outline-none focus:ring-2 focus:ring-emerald-500 transition-all font-bold"
-                      placeholder="e.g. Liver Function Test (LFT)"
-                    />
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={() => setShowModal(false)} className="absolute inset-0 bg-slate-900/60 backdrop-blur-sm" />
+            <motion.div initial={{ scale: 0.95, opacity: 0, y: 20 }} animate={{ scale: 1, opacity: 1, y: 0 }} exit={{ scale: 0.95, opacity: 0, y: 20 }} className="bg-white rounded-[2.5rem] shadow-2xl w-full max-w-xl overflow-hidden relative z-10 border border-slate-100">
+              <div className="bg-[#1E3A8A] p-8 text-white relative overflow-hidden">
+                <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -mr-16 -mt-16 blur-3xl" />
+                <div className="relative z-10">
+                  <h3 className="text-2xl font-black tracking-tight uppercase">New Patient Entry</h3>
+                  <p className="text-blue-200 text-sm font-medium mt-1 uppercase tracking-widest">Fill in the details for manual booking</p>
+                </div>
+                <button onClick={() => setShowModal(false)} className="absolute top-8 right-8 text-white/50 hover:text-white transition-colors"><X className="w-6 h-6" /></button>
+              </div>
+              <form onSubmit={e => { e.preventDefault(); void handleAddBooking(); }} className="p-8 space-y-6">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                  <div className="space-y-2">
+                    <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Patient Name</label>
+                    <input type="text" required value={form.patient_name} onChange={e => setForm(f => ({...f, patient_name: e.target.value}))} className="w-full bg-slate-50 border-none p-4 rounded-2xl outline-none focus:ring-2 focus:ring-blue-500/20 font-bold text-slate-800" placeholder="Full Name" />
                   </div>
-                  <div>
-                    <label className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1 block">Price (INR)</label>
-                    <input 
-                      type="number" 
-                      required 
-                      value={testForm.price}
-                      onChange={e => setTestForm(prev => ({...prev, price: e.target.value}))}
-                      className="w-full bg-slate-50 border border-slate-100 p-3.5 rounded-xl outline-none focus:ring-2 focus:ring-emerald-500 transition-all font-black text-emerald-700"
-                      placeholder="0.00"
-                    />
+                  <div className="space-y-2">
+                    <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Test Name</label>
+                    <input type="text" required value={form.test_name} onChange={e => setForm(f => ({...f, test_name: e.target.value}))} className="w-full bg-slate-50 border-none p-4 rounded-2xl outline-none focus:ring-2 focus:ring-blue-500/20 font-bold text-slate-800" placeholder="e.g. CBC, LFT" />
                   </div>
-                  <button 
-                    type="submit" 
-                    disabled={saving}
-                    className="w-full bg-emerald-600 hover:bg-emerald-700 text-white py-4 rounded-xl font-bold text-lg transition-all shadow-lg shadow-emerald-100 active:scale-95"
-                  >
-                    {saving ? "Saving..." : "Publish Test to Site"}
+                </div>
+                <div className="space-y-2 text-center pt-4">
+                  <button type="submit" disabled={saving} className="w-full bg-[#1E3A8A] hover:bg-blue-800 text-white py-5 rounded-[1.5rem] font-black uppercase tracking-widest text-sm transition-all shadow-xl shadow-blue-100 active:scale-95 disabled:opacity-50">
+                    {saving ? "Processing..." : "Confirm Booking"}
                   </button>
-               </form>
+                  <p className="text-[10px] font-bold text-slate-400 uppercase tracking-tighter pt-2 flex items-center justify-center gap-1.5">
+                    <ShieldCheck className="w-3 h-3" /> Secure Patient Data Management
+                  </p>
+                </div>
+              </form>
             </motion.div>
           </div>
         )}
