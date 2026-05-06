@@ -474,7 +474,7 @@ export default function AdminDashboard() {
                   <div className="hidden lg:block min-w-[1000px]">
                     <table className="w-full border-separate border-spacing-y-6">
                       <thead>
-                        <tr className="text-slate-400 text-[13px] font-black uppercase tracking-[0.25em]">
+                        <tr className="text-slate-500 text-sm font-black uppercase tracking-[0.25em]">
                           <th className="px-8 pb-4 font-black">Patient Information</th>
                           <th className="px-8 pb-4 font-black">Laboratory Test</th>
                           <th className="px-8 pb-4 font-black">Internal Status</th>
@@ -489,28 +489,28 @@ export default function AdminDashboard() {
                             key={booking.id} 
                             className="group"
                           >
-                            <td className="px-8 py-8 bg-slate-50/40 group-hover:bg-white rounded-l-[2.5rem] border-y border-l border-slate-50 transition-all duration-300 group-hover:shadow-[20px_0_40px_rgba(0,0,0,0.02)] group-hover:border-blue-100">
-                              <div className="flex flex-col gap-1.5">
-                                <span className="font-black text-slate-900 text-xl tracking-tight group-hover:text-blue-600 transition-colors">{booking.patient_name}</span>
-                                <div className="flex items-center gap-3">
-                                  <span className="text-[11px] font-black text-blue-500/60 uppercase tracking-widest">{booking.id}</span>
+                            <td className="px-8 py-10 bg-slate-50/40 group-hover:bg-white rounded-l-[2.5rem] border-y border-l border-slate-50 transition-all duration-300 group-hover:shadow-[20px_0_40px_rgba(0,0,0,0.02)] group-hover:border-blue-100">
+                              <div className="flex flex-col gap-2">
+                                <span className="font-black text-slate-900 text-3xl tracking-tight group-hover:text-blue-600 transition-colors leading-none">{booking.patient_name}</span>
+                                <div className="flex items-center gap-4">
+                                  <span className="text-sm font-black text-blue-500 uppercase tracking-widest leading-none">{booking.id}</span>
                                   <span className="w-1.5 h-1.5 bg-slate-200 rounded-full" />
-                                  <span className="text-[11px] font-black text-slate-400 uppercase tracking-widest">{new Date(booking.date).toLocaleDateString(undefined, { month: 'long', day: 'numeric', year: 'numeric' })}</span>
+                                  <span className="text-sm font-black text-slate-400 uppercase tracking-widest leading-none">{new Date(booking.date).toLocaleDateString(undefined, { month: 'long', day: 'numeric', year: 'numeric' })}</span>
                                 </div>
                               </div>
                             </td>
-                            <td className="px-8 py-8 bg-slate-50/40 group-hover:bg-white border-y border-slate-50 transition-all duration-300 group-hover:border-blue-100">
-                              <div className="inline-flex items-center gap-3 px-5 py-2.5 bg-white border border-slate-100 rounded-2xl shadow-sm group-hover:border-blue-200">
-                                <div className="w-2 h-2 bg-blue-600 rounded-full shadow-[0_0_8px_rgba(37,99,235,0.4)]" />
-                                <span className="text-xs font-black text-slate-700 uppercase tracking-[0.05em]">{booking.test_name}</span>
+                            <td className="px-8 py-10 bg-slate-50/40 group-hover:bg-white border-y border-slate-50 transition-all duration-300 group-hover:border-blue-100">
+                              <div className="inline-flex items-center gap-4 px-6 py-3 bg-white border border-slate-100 rounded-2xl shadow-sm group-hover:border-blue-200">
+                                <div className="w-2.5 h-2.5 bg-blue-600 rounded-full shadow-[0_0_8px_rgba(37,99,235,0.4)]" />
+                                <span className="text-lg font-black text-slate-800 uppercase tracking-tight">{booking.test_name}</span>
                               </div>
                             </td>
-                            <td className="px-8 py-8 bg-slate-50/40 group-hover:bg-white border-y border-slate-50 transition-all duration-300 group-hover:border-blue-100">
-                              <div className="relative w-full max-w-[220px]">
+                            <td className="px-8 py-10 bg-slate-50/40 group-hover:bg-white border-y border-slate-50 transition-all duration-300 group-hover:border-blue-100">
+                              <div className="relative w-full max-w-[240px]">
                                 <select
                                   value={booking.status}
                                   onChange={(e) => void handleUpdateStatus(booking.id, e.target.value as BookingStatus)}
-                                  className={`appearance-none w-full border-2 border-transparent rounded-[1.25rem] px-6 py-3.5 text-[10px] font-black uppercase tracking-[0.1em] outline-none focus:ring-8 focus:ring-blue-500/5 transition-all cursor-pointer shadow-md group-hover:shadow-lg ${getStatusColor(booking.status)}`}
+                                  className={`appearance-none w-full border-2 border-transparent rounded-[1.25rem] px-6 py-4 text-sm font-black uppercase tracking-widest outline-none focus:ring-8 focus:ring-blue-500/5 transition-all cursor-pointer shadow-md group-hover:shadow-lg ${getStatusColor(booking.status)}`}
                                 >
                                   <option value="Booking Confirmed">Booking Confirmed</option>
                                   <option value="Phlebotomist Assigned">Phlebotomist Assigned</option>
@@ -520,26 +520,26 @@ export default function AdminDashboard() {
                                 </select>
                               </div>
                             </td>
-                            <td className="px-8 py-8 bg-slate-50/40 group-hover:bg-white border-y border-slate-50 transition-all duration-300 group-hover:border-blue-100">
+                            <td className="px-8 py-10 bg-slate-50/40 group-hover:bg-white border-y border-slate-50 transition-all duration-300 group-hover:border-blue-100">
                               <div className="flex items-center gap-4">
                                 {booking.report_url ? (
-                                  <button onClick={() => void handleDeleteSingleReport(booking.id)} className="flex items-center gap-2 px-5 py-3 bg-red-50 text-red-600 rounded-2xl border border-red-100 hover:bg-red-600 hover:text-white transition-all text-[10px] font-black uppercase tracking-widest active:scale-95 shadow-sm">
-                                     <FileX className="w-4 h-4" /> Purge Report
+                                  <button onClick={() => void handleDeleteSingleReport(booking.id)} className="flex items-center gap-2 px-6 py-3.5 bg-red-50 text-red-600 rounded-2xl border border-red-100 hover:bg-red-600 hover:text-white transition-all text-sm font-black uppercase tracking-widest active:scale-95 shadow-sm">
+                                     <FileX className="w-5 h-5" /> Purge Report
                                   </button>
                                 ) : (
-                                  <label className="flex items-center gap-2 px-5 py-3 bg-slate-900 text-white rounded-2xl hover:bg-blue-700 transition-all text-[10px] font-black uppercase tracking-widest cursor-pointer shadow-xl shadow-slate-200 active:scale-95">
-                                     <UploadCloud className="w-4 h-4" /> Final Results
+                                  <label className="flex items-center gap-2 px-6 py-4 bg-slate-900 text-white rounded-2xl hover:bg-blue-700 transition-all text-sm font-black uppercase tracking-widest cursor-pointer shadow-xl shadow-slate-200 active:scale-95">
+                                     <UploadCloud className="w-5 h-5" /> Final Results
                                      <input type="file" accept=".pdf" className="hidden" onChange={(e) => void handleUploadReport(booking.id, e)} />
                                   </label>
                                 )}
-                                <Link href={`/track?id=${booking.id}`} target="_blank" className="p-3 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded-2xl transition-all border border-transparent hover:border-blue-100">
-                                  <ExternalLink className="w-5 h-5" />
+                                <Link href={`/track?id=${booking.id}`} target="_blank" className="p-4 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded-2xl transition-all border border-transparent hover:border-blue-100">
+                                  <ExternalLink className="w-6 h-6" />
                                 </Link>
                               </div>
                             </td>
-                            <td className="px-8 py-8 bg-slate-50/40 group-hover:bg-white rounded-r-[2.5rem] border-y border-r border-slate-50 transition-all duration-300 text-center group-hover:border-blue-100">
-                              <button onClick={() => setDeleteConfirm({ id: booking.id, name: booking.patient_name })} className="p-4 text-slate-300 hover:text-red-500 hover:bg-red-50 rounded-[1.5rem] transition-all">
-                                <Trash2 className="w-6 h-6" />
+                            <td className="px-8 py-10 bg-slate-50/40 group-hover:bg-white rounded-r-[2.5rem] border-y border-r border-slate-50 transition-all duration-300 text-center group-hover:border-blue-100">
+                              <button onClick={() => setDeleteConfirm({ id: booking.id, name: booking.patient_name })} className="p-5 text-slate-300 hover:text-red-500 hover:bg-red-50 rounded-[1.5rem] transition-all">
+                                <Trash2 className="w-7 h-7" />
                               </button>
                             </td>
                           </motion.tr>
