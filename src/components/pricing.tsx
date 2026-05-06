@@ -53,7 +53,6 @@ export function Pricing() {
         const { data, error } = await supabase
           .from('tests')
           .select('name, price, category')
-          .eq('is_active', true)
           .order('name');
         
         if (error) throw error;
@@ -387,8 +386,8 @@ export function Pricing() {
                     <TableCell colSpan={4} className="h-40 text-center text-slate-500">
                       <div className="flex flex-col items-center gap-2">
                         <Info className="w-8 h-8 text-slate-300" />
-                        <p className="font-bold text-lg text-slate-600">No tests available yet</p>
-                        <p className="text-sm">Please add tests from the Admin Dashboard.</p>
+                         <p className="font-bold text-lg text-slate-600">No tests available yet</p>
+                         <p className="text-sm text-slate-400 max-w-xs mx-auto">Our test catalog is currently being updated. Please check back shortly or call us for pricing.</p>
                       </div>
                     </TableCell>
                   </TableRow>
