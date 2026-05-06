@@ -1,35 +1,19 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
-import { Download, Search, MessageCircle } from "lucide-react";
+import { Download, Search, MessageCircle, RefreshCw } from "lucide-react";
 import { jsPDF } from "jspdf";
 
-const PRICING_DATA = [
-  { name: "CBC", price: 300 },
-  { name: "CBP", price: 400 },
-  { name: "Blood Group", price: 50 },
-  { name: "BT CT", price: 100 },
-  { name: "PS for MP", price: 200 },
-  { name: "AEC/Reticount", price: 150 },
-  { name: "PTINR", price: 400 },
-  { name: "APTT", price: 500 },
-  { name: "Urine Routine", price: 100 },
-  { name: "Urine Complete", price: 150 },
-  { name: "Urine Keton", price: 200 },
-  { name: "FBS PPBS", price: 100 },
-  { name: "RBS", price: 50 },
-  { name: "Widal", price: 100 },
-  { name: "Urea", price: 100 },
-  { name: "Creatinine", price: 100 },
-  { name: "Uric Acid", price: 250 },
-  { name: "RFT", price: 400 },
-  { name: "LFT", price: 400 },
-  { name: "Lipid Profile", price: 400 },
-];
+// Prices will now be fetched from Supabase 'tests' table
+interface TestPrice {
+  name: string;
+  price: number;
+  category?: string;
+}
 
 import { motion, AnimatePresence, type Variants } from "framer-motion";
 import { supabase, BookingStatus, BookingRecord } from "@/lib/supabase";
@@ -58,6 +42,40 @@ export function Pricing() {
   const [bookingStep, setBookingStep] = useState<'form' | 'success'>('form');
   const [loading, setLoading] = useState(false);
   const [newBookingId, setNewBookingId] = useState("");
+  const [tests, setTests] = useState<TestPrice[]>([]);
+  const [fetchingTests, setFetchingTests] = useState(true);
+  
+  // Fetch tests from Supabase
+  const fetchTests = useCallback(async () => {
+    setFetchingTests(true);
+    try {
+      if (supabase) {
+        const { data, error } = await supabase
+          .from('tests')
+          .select('name, price, category')
+          .eq('is_active', true)
+          .order('name');
+        
+        if (error) throw error;
+        setTests(data || []);
+      } else {
+        // Fallback for mock mode
+        setTests([
+          { name: "CBC (Mock)", price: 300 },
+          { name: "CBP (Mock)", price: 400 },
+          { name: "LFT (Mock)", price: 500 }
+        ]);
+      }
+    } catch (e) {
+      console.error("Failed to fetch tests:", e);
+    } finally {
+      setFetchingTests(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    void fetchTests();
+  }, [fetchTests]);
   
   const [form, setForm] = useState({
     name: "",
@@ -65,7 +83,7 @@ export function Pricing() {
     address: ""
   });
 
-  const filteredData = PRICING_DATA.filter((test) =>
+  const filteredData = tests.filter((test) =>
     test.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
@@ -355,7 +373,16 @@ export function Pricing() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {filteredData.length === 0 ? (
+                {fetchingTests ? (
+                  <TableRow>
+                    <TableCell colSpan={4} className="h-40 text-center">
+                      <div className="flex flex-col items-center gap-2 text-slate-400">
+                        <RefreshCw className="w-6 h-6 animate-spin" />
+                        <p className="font-medium">Loading live prices...</p>
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                ) : filteredData.length === 0 ? (
                   <TableRow>
                     <TableCell colSpan={4} className="h-40 text-center text-slate-500 text-lg">
                       No tests found matching &quot;{searchTerm}&quot;
