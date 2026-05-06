@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { supabase, DEMO_BOOKING_DB, BookingRecord, BookingStatus } from "@/lib/supabase";
-import { Beaker, Search, RefreshCw, X, Plus, Copy, Check, Trash2, ExternalLink, Clock, Phone, MapPin } from "lucide-react";
+import { Beaker, Search, RefreshCw, X, Plus, Copy, Check, Trash2, ExternalLink, Clock, Phone, MapPin, UploadCloud, Flame } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
 
@@ -20,6 +20,90 @@ export default function AdminDashboard() {
   const [showModal, setShowModal] = useState(false);
   const [deleteConfirm, setDeleteConfirm] = useState<{id: string, name: string} | null>(null);
   const [copiedId, setCopiedId] = useState<string | null>(null);
+  const [uploadingId, setUploadingId] = useState<string | null>(null);
+
+  const handleUploadReport = async (bookingId: string, event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+    
+    // Validate file limit & extension
+    if (file.type !== 'application/pdf') {
+      alert("Please upload a PDF file.");
+      return;
+    }
+    if (!supabase) {
+      alert("Cannot upload in mock mode.");
+      return;
+    }
+
+    setUploadingId(bookingId);
+    try {
+      const fileName = `${bookingId}.pdf`;
+      const { data, error } = await supabase.storage
+        .from('lab-reports')
+        .upload(fileName, file, { upsert: true });
+        
+      if (error) throw error;
+      
+      const { data: publicUrlData } = supabase.storage
+        .from('lab-reports')
+        .getPublicUrl(fileName);
+        
+      const report_url = publicUrlData.publicUrl;
+      const report_uploaded_at = new Date().toISOString();
+      const newStatus = 'Report Ready' as BookingStatus;
+      
+      const { error: dbError } = await supabase.from('bookings').update({ 
+        report_url, 
+        report_uploaded_at,
+        status: newStatus 
+      }).eq('id', bookingId);
+      
+      if (dbError) throw dbError;
+      
+      setBookings(prev => prev.map(b => b.id === bookingId ? { ...b, report_url, report_uploaded_at, status: newStatus } : b));
+      alert("Report uploaded successfully and status changed to Report Ready!");
+    } catch (e: any) {
+      alert("Upload failed: " + e.message);
+    } finally {
+      setUploadingId(null);
+    }
+  };
+
+  const handleCleanupExpired = async () => {
+    if (!supabase) return;
+    setSaving(true);
+    try {
+      const twoDaysAgo = new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString();
+      const { data: expiredBookings } = await supabase
+        .from('bookings')
+        .select('id')
+        .not('report_url', 'is', null)
+        .lt('report_uploaded_at', twoDaysAgo);
+
+      if (!expiredBookings || expiredBookings.length === 0) {
+        alert("No expired reports found.");
+        return;
+      }
+
+      if (!confirm(`Found ${expiredBookings.length} expired reports. Delete them permanently to save space?`)) return;
+
+      const filesToRemove = expiredBookings.map(b => `${b.id}.pdf`);
+      const { error: storageError } = await supabase.storage.from('lab-reports').remove(filesToRemove);
+      if (storageError) throw storageError;
+
+      for (const b of expiredBookings) {
+        await supabase.from('bookings').update({ report_url: null, report_uploaded_at: null }).eq('id', b.id);
+      }
+
+      await fetchBookings();
+      alert(`Cleanup successful! Emptied ${expiredBookings.length} old reports.`);
+    } catch (e: any) {
+      alert("Cleanup failed: " + e.message);
+    } finally {
+      setSaving(false);
+    }
+  };
 
   // New patient form state
   const [form, setForm] = useState(() => ({
@@ -264,6 +348,10 @@ export default function AdminDashboard() {
                     className="w-full sm:w-56 pl-9 pr-4 py-2.5 sm:py-2 border rounded-xl sm:rounded-lg text-sm outline-none focus:ring-2 focus:ring-blue-500"
                   />
                 </div>
+                <button onClick={handleCleanupExpired} disabled={saving} className="gap-2 px-3 py-2 bg-orange-50 text-orange-600 border border-orange-200 rounded-xl sm:rounded-lg hover:bg-orange-100 flex items-center text-sm font-bold transition-all flex-shrink-0 active:scale-95">
+                  <Flame className="w-4 h-4 text-orange-500" />
+                  <span className="hidden sm:inline">Purge Expired</span>
+                </button>
                 <button className="gap-2 px-3 py-2 border rounded-xl sm:rounded-lg hover:bg-slate-50 flex items-center text-sm font-medium transition-colors flex-shrink-0" onClick={() => void fetchBookings()}>
                   <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
                   <span className="hidden sm:inline">Refresh</span>
@@ -308,6 +396,16 @@ export default function AdminDashboard() {
                         >
                           <ExternalLink className="w-4 h-4" />
                         </Link>
+                        {booking.report_url ? (
+                          <div className="p-2 text-emerald-600 bg-emerald-50 rounded-lg border border-emerald-200">
+                             <Check className="w-4 h-4" />
+                          </div>
+                        ) : (
+                          <label className="p-2 bg-indigo-50 text-indigo-600 rounded-lg hover:bg-indigo-600 hover:text-white transition-all border border-indigo-100 cursor-pointer" title="Upload PDF Report">
+                             {uploadingId === booking.id ? <RefreshCw className="w-4 h-4 animate-spin" /> : <UploadCloud className="w-4 h-4" />}
+                             <input type="file" accept=".pdf" className="hidden" disabled={uploadingId === booking.id} onChange={(e) => void handleUploadReport(booking.id, e)} />
+                          </label>
+                        )}
                         <button 
                           onClick={() => setDeleteConfirm({ id: booking.id, name: booking.patient_name })}
                           className="p-2 text-red-400 hover:text-red-700 hover:bg-red-50 rounded-lg transition-all"
@@ -367,6 +465,7 @@ export default function AdminDashboard() {
                       <th className="px-6 py-4 font-bold text-[#1E3A8A]">Contact & Location</th>
                       <th className="px-6 py-4 font-bold text-[#1E3A8A]">Status</th>
                       <th className="px-6 py-4 font-bold text-[#1E3A8A] text-center">Track</th>
+                      <th className="px-6 py-4 font-bold text-[#1E3A8A] text-center">Report</th>
                       <th className="px-6 py-4 font-bold text-red-600 text-center">Action</th>
                     </tr>
                   </thead>
@@ -422,6 +521,18 @@ export default function AdminDashboard() {
                           >
                             <ExternalLink className="w-4 h-4" />
                           </Link>
+                        </td>
+                        <td className="px-6 py-5 text-center">
+                           {booking.report_url ? (
+                            <div className="inline-flex items-center justify-center p-2.5 px-3 bg-emerald-50 text-emerald-600 rounded-xl border border-emerald-200">
+                               <Check className="w-4 h-4 mr-1" /> <span className="text-[10px] font-bold">SENT</span>
+                            </div>
+                           ) : (
+                            <label className="inline-flex items-center justify-center p-2.5 bg-indigo-50 text-indigo-600 rounded-xl hover:bg-indigo-600 hover:text-white transition-all shadow-sm border border-indigo-100 cursor-pointer" title="Upload PDF Report">
+                              {uploadingId === booking.id ? <RefreshCw className="w-4 h-4 animate-spin" /> : <UploadCloud className="w-4 h-4" />}
+                              <input type="file" accept=".pdf" className="hidden" disabled={uploadingId === booking.id} onChange={(e) => void handleUploadReport(booking.id, e)} />
+                            </label>
+                           )}
                         </td>
                         <td className="px-6 py-5 text-center">
                           <button 

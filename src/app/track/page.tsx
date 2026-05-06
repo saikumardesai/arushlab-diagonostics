@@ -3,7 +3,7 @@
 import { useEffect, useState, Suspense, useCallback } from "react";
 import { useSearchParams } from "next/navigation";
 import { supabase, DEMO_BOOKING_DB, BookingRecord, BookingStatus } from "@/lib/supabase";
-import { CheckCircle2, Circle, Clock, Phone, Beaker, MapPin, RefreshCw, ClipboardList } from "lucide-react";
+import { CheckCircle2, Circle, Clock, Phone, Beaker, MapPin, RefreshCw, ClipboardList, FileText, AlertCircle, Download } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 
@@ -113,6 +113,10 @@ function TrackContent() {
   if (!booking) return null;
 
   const currentStepIndex = TIMELINE_STEPS.indexOf(booking.status);
+  
+  const isReportExpired = booking.report_uploaded_at 
+    ? (new Date().getTime() - new Date(booking.report_uploaded_at).getTime()) > 48 * 60 * 60 * 1000
+    : false;
 
   return (
     <div className="min-h-screen bg-slate-50">
@@ -186,6 +190,30 @@ function TrackContent() {
             })}
           </div>
         </div>
+
+        {/* Report Section */}
+        {booking.report_url && (
+          <div className="bg-white rounded-3xl shadow-xl shadow-blue-900/5 p-6 border border-slate-100 mb-6 text-center">
+             {isReportExpired ? (
+                <div className="bg-red-50 p-4 rounded-xl border border-red-100 flex flex-col items-center">
+                  <AlertCircle className="w-8 h-8 text-red-500 mb-2" />
+                  <p className="font-bold text-red-700">Report Expired</p>
+                  <p className="text-sm text-red-600 mt-1">For security and privacy, reports are automatically deleted after 48 hours. Please contact the lab.</p>
+                </div>
+             ) : (
+                <div className="flex flex-col items-center">
+                  <div className="bg-emerald-50 p-4 rounded-2xl mb-4 text-emerald-600 animate-bounce-short">
+                    <FileText className="w-10 h-10" />
+                  </div>
+                  <h3 className="font-bold text-slate-800 text-lg mb-1">Your Report is Ready!</h3>
+                  <p className="text-sm text-slate-500 font-medium mb-6 px-4">Available to download for 48 hours for security reasons.</p>
+                  <a href={booking.report_url} target="_blank" rel="noopener noreferrer" className="w-full bg-emerald-500 hover:bg-emerald-600 text-white rounded-xl py-4 font-bold transition-all shadow-lg shadow-emerald-200 flex items-center justify-center gap-2 active:scale-95">
+                    <Download className="w-5 h-5"/> Download PDF Report
+                  </a>
+                </div>
+             )}
+          </div>
+        )}
 
         {/* Action Button */}
         <Button 

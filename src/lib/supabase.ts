@@ -11,6 +11,8 @@ export interface BookingRecord {
   phlebotomist_name?: string;
   phone?: string;
   address?: string;
+  report_url?: string;
+  report_uploaded_at?: string;
 }
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || ''
