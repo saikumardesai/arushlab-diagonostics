@@ -391,84 +391,97 @@ export default function AdminDashboard() {
         )}
       </AnimatePresence>
 
-      {/* Modern Glassmorphism Header */}
-      <nav className="bg-white/80 backdrop-blur-md border-b border-slate-200/60 sticky top-0 z-[100]">
-        <div className="max-w-[1400px] mx-auto px-6 h-20 flex items-center justify-between">
-          <div className="flex items-center gap-4">
-            <motion.div 
-              whileHover={{ rotate: 15 }}
-              className="w-10 h-10 bg-gradient-to-br from-blue-600 to-indigo-700 rounded-xl flex items-center justify-center text-white shadow-lg shadow-blue-500/20"
-            >
-              <Beaker className="w-5 h-5" />
-            </motion.div>
+      {/* Premium Integrated Header */}
+      <nav className="bg-slate-900 border-b border-slate-800 sticky top-0 z-[100] shadow-2xl">
+        <div className="max-w-[1400px] mx-auto px-8 h-20 flex items-center justify-between">
+          <div className="flex items-center gap-6">
+            <div className="w-12 h-12 bg-blue-600 rounded-2xl flex items-center justify-center text-white shadow-xl shadow-blue-500/20">
+              <Beaker className="w-6 h-6" />
+            </div>
+            <div className="flex flex-col">
+              <span className="text-sm font-black text-white uppercase tracking-[0.3em] leading-none">Arush Lab</span>
+              <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-1.5">Administrative Portal</span>
+            </div>
           </div>
           
-          <div className="flex items-center gap-6">
+          <div className="flex items-center gap-8">
+            <div className="hidden md:flex items-center gap-6 text-[10px] font-black text-slate-400 uppercase tracking-widest">
+              <span className="hover:text-blue-400 cursor-pointer transition-colors">Overview</span>
+              <span className="hover:text-blue-400 cursor-pointer transition-colors">Patients</span>
+              <span className="hover:text-blue-400 cursor-pointer transition-colors">Reports</span>
+            </div>
             <button 
-              className="flex items-center gap-2 px-5 py-2.5 bg-slate-900 text-white hover:bg-slate-800 rounded-xl transition-all font-bold text-sm shadow-xl shadow-slate-900/10 group" 
+              className="flex items-center gap-2 px-6 py-2.5 bg-white/10 hover:bg-white/20 text-white rounded-xl transition-all font-bold text-[11px] uppercase tracking-widest border border-white/10 backdrop-blur-md group" 
               onClick={() => setIsAuthenticated(false)}
             >
-              Sign Out
+              Terminate Session
               <ArrowRight className="w-4 h-4 opacity-40 group-hover:translate-x-1 transition-transform" />
             </button>
           </div>
         </div>
       </nav>
 
-      <main className="max-w-[1400px] mx-auto px-6 py-12">
-        {/* Stats Section */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
-          <div className="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm flex items-center justify-between group hover:border-blue-200 transition-colors">
-            <div>
-              <p className="text-[11px] font-bold text-slate-400 uppercase tracking-widest mb-1">Total Orders</p>
-              <h3 className="text-3xl font-black text-slate-900">{bookings.length}</h3>
+      <main className="max-w-[1400px] mx-auto px-8 py-10">
+        <div className="flex flex-col gap-10">
+          {/* Dashboard Summary Bar */}
+          <div className="bg-white border border-slate-200/60 rounded-[2.5rem] p-4 shadow-xl shadow-slate-200/30 flex flex-wrap items-center justify-between gap-6">
+            <div className="flex items-center gap-2 pl-4">
+              <div className="flex -space-x-3">
+                {[1,2,3].map(i => (
+                  <div key={i} className="w-10 h-10 rounded-full border-4 border-white bg-slate-100 flex items-center justify-center text-[10px] font-black text-slate-400">
+                    {String.fromCharCode(64+i)}
+                  </div>
+                ))}
+              </div>
+              <div className="ml-4">
+                <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Active Pipeline</p>
+                <p className="text-sm font-bold text-slate-900">{filtered.length} Diagnostic Records</p>
+              </div>
             </div>
-            <div className="w-12 h-12 bg-blue-50 text-blue-600 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform">
-              <Clock className="w-6 h-6" />
+
+            <div className="flex items-center gap-4">
+              <div className="h-12 w-px bg-slate-100 hidden md:block" />
+              <div className="flex items-center gap-10 px-6">
+                <div>
+                  <p className="text-[9px] font-black text-slate-400 uppercase tracking-[0.2em] mb-1">Incoming</p>
+                  <p className="text-xl font-black text-slate-900">{bookings.length}</p>
+                </div>
+                <div>
+                  <p className="text-[9px] font-black text-slate-400 uppercase tracking-[0.2em] mb-1">Finalized</p>
+                  <p className="text-xl font-black text-emerald-600">
+                    {bookings.filter(b => b.status === 'Report Ready').length}
+                  </p>
+                </div>
+              </div>
+              <div className="h-12 w-px bg-slate-100 hidden md:block" />
+              
+              <div className="relative group min-w-[320px]">
+                <Search className="w-4 h-4 absolute left-5 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-blue-600 transition-colors" />
+                <input
+                  type="text"
+                  value={search}
+                  onChange={e => setSearch(e.target.value)}
+                  placeholder="Universal Patient Search..."
+                  className="w-full pl-12 pr-6 py-4 bg-slate-50 border-none rounded-2xl text-[11px] font-bold uppercase tracking-widest focus:ring-4 focus:ring-blue-500/5 focus:bg-white outline-none transition-all placeholder:text-slate-400"
+                />
+              </div>
             </div>
           </div>
 
-          <div className="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm flex items-center justify-between group hover:border-emerald-200 transition-colors">
-            <div>
-              <p className="text-[11px] font-bold text-slate-400 uppercase tracking-widest mb-1">Completed</p>
-              <h3 className="text-3xl font-black text-slate-900">
-                {bookings.filter(b => b.status === 'Report Ready').length}
-              </h3>
-            </div>
-            <div className="w-12 h-12 bg-emerald-50 text-emerald-600 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform">
-              <ShieldCheck className="w-6 h-6" />
-            </div>
-          </div>
-        </div>
-
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-8 mb-8">
-          <div className="flex items-center gap-4">
-            <div className="px-4 py-2 bg-blue-600 text-white rounded-full text-xs font-bold shadow-lg shadow-blue-500/20">
-              {filtered.length} Active Records
-            </div>
-            {search && (
+          {/* Main Content Area */}
+          <div className="bg-white border border-slate-200/60 rounded-[3rem] shadow-2xl shadow-slate-200/50 overflow-hidden">
+            <div className="px-10 py-8 bg-slate-50/50 border-b border-slate-100 flex items-center justify-between">
+              <div>
+                <h2 className="text-2xl font-black text-slate-900 tracking-tight">Management Ledger</h2>
+                <p className="text-[10px] font-bold text-slate-400 uppercase tracking-[0.3em] mt-1">Authorized Diagnostic Data Access</p>
+              </div>
               <button 
-                onClick={() => setSearch("")}
-                className="text-xs font-bold text-slate-400 hover:text-slate-600 transition-colors"
+                onClick={() => setShowModal(true)}
+                className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-2xl text-[10px] font-black uppercase tracking-[0.2em] shadow-xl shadow-blue-500/20 transition-all flex items-center gap-2 active:scale-95"
               >
-                Clear Filters
+                <Plus className="w-4 h-4" /> New Registration
               </button>
-            )}
-          </div>
-
-          <div className="relative w-full md:w-96 group">
-            <Search className="w-5 h-5 absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-blue-600 transition-colors" />
-            <input
-              type="text"
-              value={search}
-              onChange={e => setSearch(e.target.value)}
-              placeholder="Search patients, tests, or IDs..."
-              className="w-full pl-12 pr-4 py-4 bg-white border border-slate-100 rounded-[1.25rem] text-sm focus:ring-4 focus:ring-blue-500/5 focus:border-blue-500/20 outline-none transition-all shadow-sm placeholder:text-slate-400 font-medium"
-            />
-          </div>
-        </div>
-
-        <div className="bg-white border border-slate-100 rounded-[2rem] shadow-xl shadow-slate-200/40 overflow-hidden">
+            </div>
           {loading ? (
             <div className="flex flex-col items-center justify-center py-40 gap-4">
               <RefreshCw className="w-10 h-10 animate-spin text-blue-600" />
