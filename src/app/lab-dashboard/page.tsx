@@ -401,10 +401,6 @@ export default function AdminDashboard() {
             >
               <Beaker className="w-5 h-5" />
             </motion.div>
-            <div className="h-6 w-px bg-slate-200" />
-            <span className="text-xl font-black tracking-tighter text-slate-900">
-              <span className="text-blue-600">ARUSH</span> CONTROL
-            </span>
           </div>
           
           <div className="flex items-center gap-6">
@@ -420,15 +416,8 @@ export default function AdminDashboard() {
       </nav>
 
       <main className="max-w-[1400px] mx-auto px-6 py-12">
-        {/* Welcome & Stats Section */}
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 mb-12">
-          <div className="lg:col-span-2">
-            <h1 className="text-5xl font-black text-slate-900 tracking-tight mb-3">
-              Operations <span className="text-blue-600">Hub</span>
-            </h1>
-            <p className="text-slate-500 text-xl font-medium">Real-time patient diagnostics management.</p>
-          </div>
-          
+        {/* Stats Section */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
           <div className="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm flex items-center justify-between group hover:border-blue-200 transition-colors">
             <div>
               <p className="text-[11px] font-bold text-slate-400 uppercase tracking-widest mb-1">Total Orders</p>
