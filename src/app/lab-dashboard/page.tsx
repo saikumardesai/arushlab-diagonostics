@@ -391,55 +391,95 @@ export default function AdminDashboard() {
         )}
       </AnimatePresence>
 
-      {/* Corporate Header */}
-      <nav className="bg-white border-b border-slate-200 sticky top-0 z-[100]">
+      {/* Modern Glassmorphism Header */}
+      <nav className="bg-white/80 backdrop-blur-md border-b border-slate-200/60 sticky top-0 z-[100]">
         <div className="max-w-[1400px] mx-auto px-6 h-20 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center text-white">
-              <span className="font-bold text-xl">A</span>
-            </div>
-            <div className="flex flex-col">
-              <span className="text-lg font-bold text-slate-900 tracking-tight leading-none uppercase">Arush Lab</span>
-              <span className="text-[11px] font-medium text-slate-400 uppercase tracking-wider mt-1">Diagnostic Dashboard</span>
-            </div>
+          <div className="flex items-center gap-4">
+            <motion.div 
+              whileHover={{ rotate: 15 }}
+              className="w-10 h-10 bg-gradient-to-br from-blue-600 to-indigo-700 rounded-xl flex items-center justify-center text-white shadow-lg shadow-blue-500/20"
+            >
+              <Beaker className="w-5 h-5" />
+            </motion.div>
+            <div className="h-6 w-px bg-slate-200" />
+            <span className="text-xl font-black tracking-tighter text-slate-900">
+              <span className="text-blue-600">ARUSH</span> CONTROL
+            </span>
           </div>
           
           <div className="flex items-center gap-6">
-            <div className="hidden sm:flex items-center gap-2 px-3 py-1.5 bg-emerald-50 text-emerald-700 rounded-md border border-emerald-100">
-              <div className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse" />
-              <span className="text-[10px] font-bold uppercase tracking-wider">System Operational</span>
-            </div>
             <button 
-              className="flex items-center gap-2 px-4 py-2 text-slate-600 hover:text-slate-900 hover:bg-slate-50 rounded-lg transition-all font-semibold text-sm border border-slate-200 shadow-sm" 
+              className="flex items-center gap-2 px-5 py-2.5 bg-slate-900 text-white hover:bg-slate-800 rounded-xl transition-all font-bold text-sm shadow-xl shadow-slate-900/10 group" 
               onClick={() => setIsAuthenticated(false)}
             >
               Sign Out
-              <ArrowRight className="w-4 h-4 opacity-40" />
+              <ArrowRight className="w-4 h-4 opacity-40 group-hover:translate-x-1 transition-transform" />
             </button>
           </div>
         </div>
       </nav>
 
       <main className="max-w-[1400px] mx-auto px-6 py-12">
-        <div className="flex flex-col md:flex-row md:items-end justify-between gap-8 mb-12">
-          <div>
-            <h1 className="text-4xl font-extrabold text-slate-900 tracking-tight mb-2">Active Bookings</h1>
-            <p className="text-slate-500 text-lg">Manage patient registrations and diagnostic deliverables.</p>
+        {/* Welcome & Stats Section */}
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 mb-12">
+          <div className="lg:col-span-2">
+            <h1 className="text-5xl font-black text-slate-900 tracking-tight mb-3">
+              Operations <span className="text-blue-600">Hub</span>
+            </h1>
+            <p className="text-slate-500 text-xl font-medium">Real-time patient diagnostics management.</p>
+          </div>
+          
+          <div className="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm flex items-center justify-between group hover:border-blue-200 transition-colors">
+            <div>
+              <p className="text-[11px] font-bold text-slate-400 uppercase tracking-widest mb-1">Total Orders</p>
+              <h3 className="text-3xl font-black text-slate-900">{bookings.length}</h3>
+            </div>
+            <div className="w-12 h-12 bg-blue-50 text-blue-600 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform">
+              <Clock className="w-6 h-6" />
+            </div>
           </div>
 
-          <div className="relative w-full md:w-96">
-            <Search className="w-5 h-5 absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" />
+          <div className="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm flex items-center justify-between group hover:border-emerald-200 transition-colors">
+            <div>
+              <p className="text-[11px] font-bold text-slate-400 uppercase tracking-widest mb-1">Completed</p>
+              <h3 className="text-3xl font-black text-slate-900">
+                {bookings.filter(b => b.status === 'Report Ready').length}
+              </h3>
+            </div>
+            <div className="w-12 h-12 bg-emerald-50 text-emerald-600 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform">
+              <ShieldCheck className="w-6 h-6" />
+            </div>
+          </div>
+        </div>
+
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-8 mb-8">
+          <div className="flex items-center gap-4">
+            <div className="px-4 py-2 bg-blue-600 text-white rounded-full text-xs font-bold shadow-lg shadow-blue-500/20">
+              {filtered.length} Active Records
+            </div>
+            {search && (
+              <button 
+                onClick={() => setSearch("")}
+                className="text-xs font-bold text-slate-400 hover:text-slate-600 transition-colors"
+              >
+                Clear Filters
+              </button>
+            )}
+          </div>
+
+          <div className="relative w-full md:w-96 group">
+            <Search className="w-5 h-5 absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-blue-600 transition-colors" />
             <input
               type="text"
               value={search}
               onChange={e => setSearch(e.target.value)}
-              placeholder="Filter by name, ID, or test..."
-              className="w-full pl-12 pr-4 py-3.5 bg-white border border-slate-200 rounded-xl text-sm focus:ring-4 focus:ring-blue-500/5 focus:border-blue-500/30 outline-none transition-all shadow-sm placeholder:text-slate-400 font-medium"
+              placeholder="Search patients, tests, or IDs..."
+              className="w-full pl-12 pr-4 py-4 bg-white border border-slate-100 rounded-[1.25rem] text-sm focus:ring-4 focus:ring-blue-500/5 focus:border-blue-500/20 outline-none transition-all shadow-sm placeholder:text-slate-400 font-medium"
             />
           </div>
         </div>
 
-        <div className="bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden">
+        <div className="bg-white border border-slate-100 rounded-[2rem] shadow-xl shadow-slate-200/40 overflow-hidden">
           {loading ? (
             <div className="flex flex-col items-center justify-center py-40 gap-4">
               <RefreshCw className="w-10 h-10 animate-spin text-blue-600" />
@@ -458,35 +498,49 @@ export default function AdminDashboard() {
               {/* Desktop Professional Table */}
               <table className="w-full text-left hidden lg:table border-collapse">
                 <thead>
-                  <tr className="bg-slate-50/50 border-b border-slate-200">
-                    <th className="px-8 py-5 text-xs font-bold text-slate-500 uppercase tracking-wider">Patient Details</th>
-                    <th className="px-8 py-5 text-xs font-bold text-slate-500 uppercase tracking-wider">Test Ordered</th>
-                    <th className="px-8 py-5 text-xs font-bold text-slate-500 uppercase tracking-wider">Internal Status</th>
-                    <th className="px-8 py-5 text-xs font-bold text-slate-500 uppercase tracking-wider">Deliverables</th>
-                    <th className="px-8 py-5 text-right text-xs font-bold text-slate-500 uppercase tracking-wider">Actions</th>
+                  <tr className="bg-slate-50/30 border-b border-slate-100">
+                    <th className="px-8 py-6 text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Patient Details</th>
+                    <th className="px-8 py-6 text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Medical Service</th>
+                    <th className="px-8 py-6 text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Internal Pipeline</th>
+                    <th className="px-8 py-6 text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Actions & Reports</th>
+                    <th className="px-8 py-6 text-right text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Control</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {filtered.map((booking) => (
-                    <tr key={booking.id} className="border-b border-slate-100 last:border-0 hover:bg-slate-50/50 transition-colors">
-                      <td className="px-8 py-6">
-                        <div className="flex flex-col">
-                          <span className="text-base font-bold text-slate-900 mb-1">{booking.patient_name}</span>
-                          <div className="flex items-center gap-2">
-                            <span className="text-[11px] font-bold text-blue-600 bg-blue-50 px-2 py-0.5 rounded uppercase tracking-wider">{booking.id}</span>
-                            <span className="text-[11px] font-medium text-slate-400">• {new Date(booking.date).toLocaleDateString()}</span>
+                   {filtered.map((booking) => (
+                    <motion.tr 
+                      layout
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      key={booking.id} 
+                      className="group border-b border-slate-100 last:border-0 hover:bg-blue-50/30 transition-colors"
+                    >
+                      <td className="px-8 py-7">
+                        <div className="flex items-center gap-4">
+                          <div className="w-10 h-10 bg-slate-100 rounded-full flex items-center justify-center text-slate-400 font-black text-xs">
+                            {booking.patient_name.charAt(0)}
+                          </div>
+                          <div className="flex flex-col">
+                            <span className="text-base font-bold text-slate-900 leading-tight group-hover:text-blue-600 transition-colors">{booking.patient_name}</span>
+                            <div className="flex items-center gap-2 mt-1">
+                              <span className="text-[10px] font-black text-blue-600 bg-blue-50/50 px-2 py-0.5 rounded-md uppercase tracking-wider">{booking.id}</span>
+                              <span className="text-[10px] font-bold text-slate-400 uppercase tracking-tighter">{new Date(booking.date).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })}</span>
+                            </div>
                           </div>
                         </div>
                       </td>
-                      <td className="px-8 py-6">
-                        <span className="text-sm font-semibold text-slate-700">{booking.test_name}</span>
+                      <td className="px-8 py-7">
+                        <div className="flex flex-col">
+                          <span className="text-sm font-bold text-slate-700">{booking.test_name}</span>
+                          <span className="text-[10px] font-medium text-slate-400 mt-1">Diagnostic Protocol Standard</span>
+                        </div>
                       </td>
-                      <td className="px-8 py-6">
-                        <div className="relative">
+                      <td className="px-8 py-7">
+                        <div className="relative group/select">
                           <select
                             value={booking.status}
                             onChange={(e) => void handleUpdateStatus(booking.id, e.target.value as BookingStatus)}
-                            className={`appearance-none border rounded-lg px-4 py-2 text-[11px] font-bold uppercase tracking-wider outline-none focus:ring-4 focus:ring-blue-500/5 transition-all cursor-pointer w-48 ${getStatusColor(booking.status)}`}
+                            className={`appearance-none border-2 rounded-xl px-4 py-2.5 text-[10px] font-black uppercase tracking-[0.1em] outline-none focus:ring-4 focus:ring-blue-500/10 transition-all cursor-pointer w-52 shadow-sm ${getStatusColor(booking.status)}`}
                           >
                             <option value="Booking Confirmed">Booking Confirmed</option>
                             <option value="Phlebotomist Assigned">Phlebotomist Assigned</option>
@@ -496,35 +550,40 @@ export default function AdminDashboard() {
                           </select>
                         </div>
                       </td>
-                      <td className="px-8 py-6">
-                        <div className="flex items-center gap-3">
+                      <td className="px-8 py-7">
+                        <div className="flex items-center gap-2">
                           {booking.report_url ? (
                             <button 
                               onClick={() => void handleDeleteSingleReport(booking.id)} 
-                              className="px-4 py-2 bg-red-50 text-red-600 rounded-lg border border-red-100 hover:bg-red-600 hover:text-white transition-all text-[11px] font-bold uppercase tracking-wider flex items-center gap-2"
+                              className="px-4 py-2.5 bg-red-50 text-red-600 rounded-xl border border-red-100 hover:bg-red-600 hover:text-white transition-all text-[10px] font-black uppercase tracking-widest flex items-center gap-2 shadow-sm"
                             >
-                               <FileX className="w-3.5 h-3.5" /> Purge
+                               <FileX className="w-3.5 h-3.5" /> REMOVE REPORT
                             </button>
                           ) : (
-                            <label className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-all text-[11px] font-bold uppercase tracking-wider flex items-center gap-2 cursor-pointer shadow-sm">
-                               <UploadCloud className="w-3.5 h-3.5" /> Finalize
+                            <label className="px-4 py-2.5 bg-slate-900 text-white rounded-xl hover:bg-blue-600 transition-all text-[10px] font-black uppercase tracking-widest flex items-center gap-2 cursor-pointer shadow-lg shadow-slate-900/10 active:scale-95">
+                               <UploadCloud className="w-3.5 h-3.5" /> UPLOAD DATA
                                <input type="file" accept=".pdf" className="hidden" onChange={(e) => void handleUploadReport(booking.id, e)} />
                             </label>
                           )}
-                          <Link href={`/track?id=${booking.id}`} target="_blank" className="p-2 text-slate-400 hover:text-blue-600 transition-colors">
+                          <Link 
+                            href={`/track?id=${booking.id}`} 
+                            target="_blank" 
+                            className="p-2.5 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded-xl transition-all"
+                            title="Tracking Portal"
+                          >
                             <ExternalLink className="w-4 h-4" />
                           </Link>
                         </div>
                       </td>
-                      <td className="px-8 py-6 text-right">
+                      <td className="px-8 py-7 text-right">
                         <button 
                           onClick={() => setDeleteConfirm({ id: booking.id, name: booking.patient_name })} 
-                          className="p-2.5 text-slate-300 hover:text-red-500 hover:bg-red-50 rounded-lg transition-all"
+                          className="p-3 text-slate-300 hover:text-red-500 hover:bg-red-50 rounded-xl transition-all opacity-0 group-hover:opacity-100"
                         >
                           <Trash2 className="w-5 h-5" />
                         </button>
                       </td>
-                    </tr>
+                    </motion.tr>
                   ))}
                 </tbody>
               </table>
@@ -532,26 +591,36 @@ export default function AdminDashboard() {
               {/* Mobile Professional View */}
               <div className="lg:hidden divide-y divide-slate-100">
                 {filtered.map((booking) => (
-                  <div key={booking.id} className="p-6 space-y-6">
+                  <div key={booking.id} className="p-8 space-y-6 hover:bg-blue-50/20 transition-colors relative group">
                     <div className="flex justify-between items-start">
-                      <div>
-                        <h3 className="text-lg font-bold text-slate-900 mb-1">{booking.patient_name}</h3>
-                        <div className="flex items-center gap-2">
-                          <span className="text-[10px] font-bold text-blue-600 bg-blue-50 px-2 py-0.5 rounded uppercase tracking-wider">{booking.id}</span>
-                          <span className="text-[10px] font-medium text-slate-400">{new Date(booking.date).toLocaleDateString()}</span>
+                      <div className="flex items-center gap-4">
+                        <div className="w-12 h-12 bg-slate-100 rounded-2xl flex items-center justify-center text-slate-400 font-black text-sm">
+                          {booking.patient_name.charAt(0)}
+                        </div>
+                        <div>
+                          <h3 className="text-xl font-black text-slate-900 tracking-tight">{booking.patient_name}</h3>
+                          <div className="flex items-center gap-2 mt-1">
+                            <span className="text-[10px] font-black text-blue-600 bg-blue-50 px-2 py-0.5 rounded-md uppercase tracking-wider">{booking.id}</span>
+                            <span className="text-[10px] font-bold text-slate-400 uppercase tracking-tighter">{new Date(booking.date).toLocaleDateString()}</span>
+                          </div>
                         </div>
                       </div>
-                      <button onClick={() => setDeleteConfirm({ id: booking.id, name: booking.patient_name })} className="p-2 text-slate-300 hover:text-red-500"><Trash2 className="w-5 h-5" /></button>
+                      <button 
+                        onClick={() => setDeleteConfirm({ id: booking.id, name: booking.patient_name })} 
+                        className="p-2 text-slate-200 hover:text-red-500 transition-colors"
+                      >
+                        <Trash2 className="w-6 h-6" />
+                      </button>
                     </div>
 
-                    <div className="grid grid-cols-2 gap-4">
+                    <div className="grid grid-cols-1 gap-6 bg-slate-50/50 p-4 rounded-2xl border border-slate-100">
                       <div className="flex flex-col gap-1">
-                        <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Test Ordered</span>
-                        <span className="text-sm font-semibold text-slate-700">{booking.test_name}</span>
+                        <span className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Service</span>
+                        <span className="text-base font-bold text-slate-700">{booking.test_name}</span>
                       </div>
                       <div className="flex flex-col gap-2">
-                        <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Current Status</span>
-                        <div className={`text-[9px] font-bold uppercase tracking-widest py-1.5 px-3 rounded-md border inline-block text-center ${getStatusColor(booking.status)}`}>
+                        <span className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Current State</span>
+                        <div className={`text-[10px] font-black uppercase tracking-widest py-2.5 px-4 rounded-xl border-2 inline-block text-center shadow-sm ${getStatusColor(booking.status)}`}>
                           {booking.status}
                         </div>
                       </div>
@@ -559,17 +628,17 @@ export default function AdminDashboard() {
 
                     <div className="flex gap-3">
                       {booking.report_url ? (
-                        <button onClick={() => void handleDeleteSingleReport(booking.id)} className="flex-1 py-3 bg-red-50 text-red-600 rounded-lg text-[11px] font-bold uppercase tracking-wider border border-red-100">
-                           Purge Report
+                        <button onClick={() => void handleDeleteSingleReport(booking.id)} className="flex-1 py-4 bg-red-50 text-red-600 rounded-2xl text-[10px] font-black uppercase tracking-widest border border-red-100 shadow-sm active:scale-95 transition-transform">
+                           REMOVE REPORT
                         </button>
                       ) : (
-                        <label className="flex-1 py-3 bg-slate-900 text-white rounded-lg text-[11px] font-bold uppercase tracking-wider flex items-center justify-center gap-2 cursor-pointer shadow-md">
-                           <UploadCloud className="w-4 h-4" /> Upload Report
+                        <label className="flex-1 py-4 bg-slate-900 text-white rounded-2xl text-[10px] font-black uppercase tracking-widest flex items-center justify-center gap-2 cursor-pointer shadow-xl shadow-slate-900/10 active:scale-95 transition-all">
+                           <UploadCloud className="w-5 h-5" /> UPLOAD REPORT
                            <input type="file" accept=".pdf" className="hidden" onChange={(e) => void handleUploadReport(booking.id, e)} />
                         </label>
                       )}
-                      <Link href={`/track?id=${booking.id}`} className="p-3 border border-slate-200 text-slate-400 rounded-lg flex items-center justify-center aspect-square shadow-sm">
-                         <ExternalLink className="w-5 h-5" />
+                      <Link href={`/track?id=${booking.id}`} className="px-5 py-4 border border-slate-200 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded-2xl flex items-center justify-center shadow-sm transition-colors">
+                         <ExternalLink className="w-6 h-6" />
                       </Link>
                     </div>
                   </div>
@@ -580,8 +649,13 @@ export default function AdminDashboard() {
         </div>
       </main>
 
-      <footer className="max-w-[1400px] mx-auto px-6 py-12 border-t border-slate-200 text-center">
-        <p className="text-xs font-semibold text-slate-400 uppercase tracking-[0.4em]">Arush Diagnostics • Enterprise Control Center • v2.1.0</p>
+      <footer className="max-w-[1400px] mx-auto px-6 py-20 border-t border-slate-100 text-center">
+        <div className="flex flex-col items-center gap-6">
+          <div className="w-12 h-12 bg-slate-100 rounded-2xl flex items-center justify-center text-slate-400">
+            <Lock className="w-6 h-6" />
+          </div>
+          <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.5em]">Secure Infrastructure • Arush Labs Enterprise • 2026</p>
+        </div>
       </footer>
     </div>
   );
