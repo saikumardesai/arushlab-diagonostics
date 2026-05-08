@@ -649,7 +649,8 @@ export default function AdminDashboard() {
             </div>
           )}
         </div>
-      </main>
+      </div>
+    </main>
 
       <footer className="max-w-[1400px] mx-auto px-6 py-20 border-t border-slate-100 text-center">
         <div className="flex flex-col items-center gap-6">
