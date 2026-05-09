@@ -325,7 +325,7 @@ export default function AdminDashboard() {
     );
   }
 
-  const statuses: BookingStatus[] = ['Booking Confirmed', 'Phlebotomist Assigned', 'Sample Collected', 'Testing', 'Report Ready'];
+  const statuses: BookingStatus[] = ['Booking Confirmed', 'Lab Technician Assigned', 'Sample Collected', 'Testing', 'Report Ready'];
   const filtered = bookings.filter(b =>
     b.patient_name?.toLowerCase().includes(search.toLowerCase()) ||
     b.test_name?.toLowerCase().includes(search.toLowerCase()) ||
@@ -334,12 +334,12 @@ export default function AdminDashboard() {
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'Booking Confirmed': return 'bg-amber-50 text-amber-700 border-amber-200';
-      case 'Phlebotomist Assigned': return 'bg-blue-50 text-blue-700 border-blue-200';
-      case 'Sample Collected': return 'bg-purple-50 text-purple-700 border-purple-200';
-      case 'Testing': return 'bg-orange-50 text-orange-700 border-orange-200';
-      case 'Report Ready': return 'bg-emerald-50 text-emerald-700 border-emerald-200';
-      default: return 'bg-slate-50 text-slate-700 border-slate-200';
+      case 'Booking Confirmed': return 'bg-amber-100/50 text-amber-700 border-amber-200/50';
+      case 'Lab Technician Assigned': return 'bg-sky-100/50 text-sky-700 border-sky-200/50';
+      case 'Sample Collected': return 'bg-indigo-100/50 text-indigo-700 border-indigo-200/50';
+      case 'Testing': return 'bg-orange-100/50 text-orange-700 border-orange-200/50';
+      case 'Report Ready': return 'bg-emerald-100/50 text-emerald-700 border-emerald-200/50';
+      default: return 'bg-slate-100/50 text-slate-700 border-slate-200/50';
     }
   };
 
@@ -431,12 +431,12 @@ export default function AdminDashboard() {
               {/* Desktop Professional Table */}
               <table className="w-full text-left hidden lg:table border-collapse">
                 <thead>
-                  <tr className="bg-slate-50/30 border-b border-slate-100">
-                    <th className="px-8 py-6 text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Patient Details</th>
-                    <th className="px-8 py-6 text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Medical Service</th>
-                    <th className="px-8 py-6 text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Internal Pipeline</th>
-                    <th className="px-8 py-6 text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Actions & Reports</th>
-                    <th className="px-8 py-6 text-right text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Control</th>
+                  <tr className="bg-slate-50/80 border-b border-slate-100">
+                    <th className="px-8 py-5 text-[11px] font-bold text-slate-500 uppercase tracking-wider">Patient Name</th>
+                    <th className="px-8 py-5 text-[11px] font-bold text-slate-500 uppercase tracking-wider">Test Details</th>
+                    <th className="px-8 py-5 text-[11px] font-bold text-slate-500 uppercase tracking-wider">Current Status</th>
+                    <th className="px-8 py-5 text-[11px] font-bold text-slate-500 uppercase tracking-wider">Medical Reports</th>
+                    <th className="px-8 py-5 text-right text-[11px] font-bold text-slate-500 uppercase tracking-wider">Actions</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -448,70 +448,73 @@ export default function AdminDashboard() {
                       key={booking.id} 
                       className="group border-b border-slate-100 last:border-0 hover:bg-blue-50/30 transition-colors"
                     >
-                      <td className="px-8 py-7">
+                      <td className="px-8 py-6">
                         <div className="flex items-center gap-4">
-                          <div className="w-10 h-10 bg-slate-100 rounded-full flex items-center justify-center text-slate-400 font-black text-xs">
+                          <div className="w-11 h-11 bg-gradient-to-br from-slate-100 to-slate-200 rounded-2xl flex items-center justify-center text-slate-500 font-bold text-sm shadow-sm border border-slate-200/50">
                             {booking.patient_name.charAt(0)}
                           </div>
                           <div className="flex flex-col">
-                            <span className="text-base font-bold text-slate-900 leading-tight group-hover:text-blue-600 transition-colors">{booking.patient_name}</span>
-                            <div className="flex items-center gap-2 mt-1">
-                              <span className="text-[10px] font-black text-blue-600 bg-blue-50/50 px-2 py-0.5 rounded-md uppercase tracking-wider">{booking.id}</span>
-                              <span className="text-[10px] font-bold text-slate-400 uppercase tracking-tighter">{new Date(booking.date).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })}</span>
+                            <span className="text-[15px] font-bold text-slate-900 tracking-tight leading-tight group-hover:text-blue-600 transition-colors">{booking.patient_name}</span>
+                            <div className="flex items-center gap-2.5 mt-1.5">
+                              <span className="text-[10px] font-bold text-blue-600/80 bg-blue-50/80 px-2 py-0.5 rounded-md border border-blue-100/50 tracking-wider uppercase">{booking.id}</span>
+                              <span className="text-[10px] font-semibold text-slate-400 uppercase tracking-wide">{new Date(booking.date).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })}</span>
                             </div>
                           </div>
                         </div>
                       </td>
-                      <td className="px-8 py-7">
+                      <td className="px-8 py-6">
                         <div className="flex flex-col">
-                          <span className="text-sm font-bold text-slate-700">{booking.test_name}</span>
-                          <span className="text-[10px] font-medium text-slate-400 mt-1">Diagnostic Protocol Standard</span>
+                          <span className="text-[14px] font-bold text-slate-700 tracking-tight">{booking.test_name}</span>
+                          <span className="text-[10px] font-semibold text-slate-400 uppercase tracking-widest mt-1">Medical Analysis</span>
                         </div>
                       </td>
-                      <td className="px-8 py-7">
-                        <div className="relative group/select">
+                      <td className="px-8 py-6">
+                        <div className="relative group/select inline-block">
                           <select
                             value={booking.status}
                             onChange={(e) => void handleUpdateStatus(booking.id, e.target.value as BookingStatus)}
-                            className={`appearance-none border-2 rounded-xl px-4 py-2.5 text-[10px] font-black uppercase tracking-[0.1em] outline-none focus:ring-4 focus:ring-blue-500/10 transition-all cursor-pointer w-52 shadow-sm ${getStatusColor(booking.status)}`}
+                            className={`appearance-none border-[1.5px] rounded-xl px-4 py-2.5 text-[11px] font-bold uppercase tracking-widest outline-none focus:ring-4 focus:ring-blue-500/10 transition-all cursor-pointer min-w-[210px] shadow-sm ${getStatusColor(booking.status)}`}
                           >
                             <option value="Booking Confirmed">Booking Confirmed</option>
-                            <option value="Phlebotomist Assigned">Phlebotomist Assigned</option>
+                            <option value="Lab Technician Assigned">Lab Technician Assigned</option>
                             <option value="Sample Collected">Sample Collected</option>
                             <option value="Testing">Testing</option>
                             <option value="Report Ready">Report Ready</option>
                           </select>
+                          <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none opacity-40">
+                            <ArrowRight className="w-3.5 h-3.5 rotate-90" />
+                          </div>
                         </div>
                       </td>
-                      <td className="px-8 py-7">
-                        <div className="flex items-center gap-2">
+                      <td className="px-8 py-6">
+                        <div className="flex items-center gap-3">
                           {booking.report_url ? (
                             <button 
                               onClick={() => void handleDeleteSingleReport(booking.id)} 
-                              className="px-4 py-2.5 bg-red-50 text-red-600 rounded-xl border border-red-100 hover:bg-red-600 hover:text-white transition-all text-[10px] font-black uppercase tracking-widest flex items-center gap-2 shadow-sm"
+                              className="px-4 py-2 bg-red-50 text-red-600 rounded-xl border border-red-100 hover:bg-red-600 hover:text-white transition-all text-[10px] font-bold uppercase tracking-widest flex items-center gap-2 shadow-sm"
                             >
-                               <FileX className="w-3.5 h-3.5" /> REMOVE REPORT
+                               <FileX className="w-3.5 h-3.5" /> Remove
                             </button>
                           ) : (
-                            <label className="px-4 py-2.5 bg-slate-900 text-white rounded-xl hover:bg-blue-600 transition-all text-[10px] font-black uppercase tracking-widest flex items-center gap-2 cursor-pointer shadow-lg shadow-slate-900/10 active:scale-95">
-                               <UploadCloud className="w-3.5 h-3.5" /> UPLOAD DATA
+                            <label className="px-5 py-2.5 bg-slate-900 text-white rounded-xl hover:bg-blue-600 transition-all text-[10px] font-bold uppercase tracking-widest flex items-center gap-2 cursor-pointer shadow-lg shadow-slate-900/10 active:scale-95 border border-slate-800">
+                               <UploadCloud className="w-3.5 h-3.5" /> Upload Report
                                <input type="file" accept=".pdf" className="hidden" onChange={(e) => void handleUploadReport(booking.id, e)} />
                             </label>
                           )}
                           <Link 
                             href={`/track?id=${booking.id}`} 
                             target="_blank" 
-                            className="p-2.5 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded-xl transition-all"
+                            className="p-2.5 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded-xl transition-all border border-transparent hover:border-blue-100"
                             title="Tracking Portal"
                           >
-                            <ExternalLink className="w-4 h-4" />
+                            <ExternalLink className="w-4.5 h-4.5" />
                           </Link>
                         </div>
                       </td>
-                      <td className="px-8 py-7 text-right">
+                      <td className="px-8 py-6 text-right">
                         <button 
                           onClick={() => setDeleteConfirm({ id: booking.id, name: booking.patient_name })} 
-                          className="p-3 text-slate-300 hover:text-red-500 hover:bg-red-50 rounded-xl transition-all opacity-0 group-hover:opacity-100"
+                          className="p-3 text-slate-300 hover:text-red-500 hover:bg-red-50 rounded-xl transition-all opacity-0 group-hover:opacity-100 bg-slate-50/50 border border-transparent hover:border-red-100"
                         >
                           <Trash2 className="w-5 h-5" />
                         </button>
@@ -524,54 +527,54 @@ export default function AdminDashboard() {
               {/* Mobile Professional View */}
               <div className="lg:hidden divide-y divide-slate-100">
                 {filtered.map((booking) => (
-                  <div key={booking.id} className="p-8 space-y-6 hover:bg-blue-50/20 transition-colors relative group">
+                  <div key={booking.id} className="p-6 space-y-5 hover:bg-slate-50/50 transition-colors relative">
                     <div className="flex justify-between items-start">
                       <div className="flex items-center gap-4">
-                        <div className="w-12 h-12 bg-slate-100 rounded-2xl flex items-center justify-center text-slate-400 font-black text-sm">
+                        <div className="w-12 h-12 bg-blue-50 text-blue-600 rounded-2xl flex items-center justify-center font-bold text-lg shadow-inner">
                           {booking.patient_name.charAt(0)}
                         </div>
                         <div>
-                          <h3 className="text-xl font-black text-slate-900 tracking-tight">{booking.patient_name}</h3>
-                          <div className="flex items-center gap-2 mt-1">
-                            <span className="text-[10px] font-black text-blue-600 bg-blue-50 px-2 py-0.5 rounded-md uppercase tracking-wider">{booking.id}</span>
-                            <span className="text-[10px] font-bold text-slate-400 uppercase tracking-tighter">{new Date(booking.date).toLocaleDateString()}</span>
+                          <h3 className="text-lg font-bold text-slate-900 leading-tight">{booking.patient_name}</h3>
+                          <div className="flex items-center gap-2 mt-0.5">
+                            <span className="text-[10px] font-bold text-blue-600 bg-blue-50 px-2 py-0.5 rounded-md uppercase tracking-wide border border-blue-100">{booking.id}</span>
+                            <span className="text-[10px] font-medium text-slate-400">{new Date(booking.date).toLocaleDateString()}</span>
                           </div>
                         </div>
                       </div>
                       <button 
                         onClick={() => setDeleteConfirm({ id: booking.id, name: booking.patient_name })} 
-                        className="p-2 text-slate-200 hover:text-red-500 transition-colors"
+                        className="p-2 text-slate-300 hover:text-red-500 transition-colors bg-slate-50 rounded-lg"
                       >
-                        <Trash2 className="w-6 h-6" />
+                        <Trash2 className="w-5 h-5" />
                       </button>
                     </div>
 
-                    <div className="grid grid-cols-1 gap-6 bg-slate-50/50 p-4 rounded-2xl border border-slate-100">
-                      <div className="flex flex-col gap-1">
-                        <span className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Service</span>
-                        <span className="text-base font-bold text-slate-700">{booking.test_name}</span>
+                    <div className="grid grid-cols-2 gap-4">
+                      <div className="flex flex-col gap-1.5 p-3 bg-slate-50/80 rounded-xl border border-slate-100">
+                        <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Test</span>
+                        <span className="text-sm font-bold text-slate-700 truncate">{booking.test_name}</span>
                       </div>
-                      <div className="flex flex-col gap-2">
-                        <span className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Current State</span>
-                        <div className={`text-[10px] font-black uppercase tracking-widest py-2.5 px-4 rounded-xl border-2 inline-block text-center shadow-sm ${getStatusColor(booking.status)}`}>
+                      <div className="flex flex-col gap-1.5 p-3 bg-slate-50/80 rounded-xl border border-slate-100">
+                        <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Status</span>
+                        <span className={`text-[10px] font-bold uppercase truncate px-2 py-1 rounded-lg border-[1px] text-center ${getStatusColor(booking.status)}`}>
                           {booking.status}
-                        </div>
+                        </span>
                       </div>
                     </div>
 
-                    <div className="flex gap-3">
+                    <div className="flex gap-3 pt-2">
                       {booking.report_url ? (
-                        <button onClick={() => void handleDeleteSingleReport(booking.id)} className="flex-1 py-4 bg-red-50 text-red-600 rounded-2xl text-[10px] font-black uppercase tracking-widest border border-red-100 shadow-sm active:scale-95 transition-transform">
-                           REMOVE REPORT
+                        <button onClick={() => void handleDeleteSingleReport(booking.id)} className="flex-1 py-3 bg-red-50 text-red-600 rounded-xl text-[11px] font-bold uppercase tracking-wider border border-red-100 active:scale-95 transition-all">
+                           Delete Report
                         </button>
                       ) : (
-                        <label className="flex-1 py-4 bg-slate-900 text-white rounded-2xl text-[10px] font-black uppercase tracking-widest flex items-center justify-center gap-2 cursor-pointer shadow-xl shadow-slate-900/10 active:scale-95 transition-all">
-                           <UploadCloud className="w-5 h-5" /> UPLOAD REPORT
+                        <label className="flex-1 py-3 bg-slate-900 text-white rounded-xl text-[11px] font-bold uppercase tracking-wider flex items-center justify-center gap-2 cursor-pointer shadow-lg shadow-slate-900/10 active:scale-95 transition-all">
+                           <UploadCloud className="w-4 h-4" /> Upload
                            <input type="file" accept=".pdf" className="hidden" onChange={(e) => void handleUploadReport(booking.id, e)} />
                         </label>
                       )}
-                      <Link href={`/track?id=${booking.id}`} className="px-5 py-4 border border-slate-200 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded-2xl flex items-center justify-center shadow-sm transition-colors">
-                         <ExternalLink className="w-6 h-6" />
+                      <Link href={`/track?id=${booking.id}`} className="px-4 py-3 bg-white border border-slate-200 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded-xl flex items-center justify-center shadow-sm transition-all active:scale-95">
+                         <ExternalLink className="w-5 h-5" />
                       </Link>
                     </div>
                   </div>

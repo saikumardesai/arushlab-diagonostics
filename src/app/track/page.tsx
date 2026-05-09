@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/button";
 
 const TIMELINE_STEPS: BookingStatus[] = [
   'Booking Confirmed', 
-  'Phlebotomist Assigned', 
+  'Lab Technician Assigned', 
   'Sample Collected', 
   'Testing', 
   'Report Ready'
@@ -171,10 +171,10 @@ function TrackContent() {
                       <h3 className={`font-bold ${isCurrent ? 'text-blue-900' : (isPending ? 'text-slate-400' : 'text-slate-800')}`}>{step}</h3>
                       
                       {/* Supplemental info based on step */}
-                      {isCurrent && step === 'Phlebotomist Assigned' && booking.phlebotomist_name && (
+                      {isCurrent && step === 'Lab Technician Assigned' && booking.phlebotomist_name && (
                         <p className="text-sm text-blue-700 mt-1 flex items-center gap-1.5 font-medium">
                           <MapPin className="w-3.5 h-3.5" />
-                          {booking.phlebotomist_name} is arriving shortly.
+                          Technician {booking.phlebotomist_name} is arriving shortly.
                         </p>
                       )}
                       

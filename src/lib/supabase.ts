@@ -1,6 +1,6 @@
 import { createClient } from '@supabase/supabase-js'
 
-export type BookingStatus = 'Booking Confirmed' | 'Phlebotomist Assigned' | 'Sample Collected' | 'Testing' | 'Report Ready';
+export type BookingStatus = 'Booking Confirmed' | 'Lab Technician Assigned' | 'Sample Collected' | 'Testing' | 'Report Ready';
 
 export interface BookingRecord {
   id: string;
