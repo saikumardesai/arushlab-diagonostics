@@ -391,35 +391,7 @@ export default function AdminDashboard() {
         )}
       </AnimatePresence>
 
-      {/* Premium Integrated Header */}
-      <nav className="bg-slate-900 border-b border-slate-800 sticky top-0 z-[100] shadow-2xl">
-        <div className="max-w-[1400px] mx-auto px-8 h-20 flex items-center justify-between">
-          <div className="flex items-center gap-6">
-            <div className="w-12 h-12 bg-blue-600 rounded-2xl flex items-center justify-center text-white shadow-xl shadow-blue-500/20">
-              <Beaker className="w-6 h-6" />
-            </div>
-            <div className="flex flex-col">
-              <span className="text-sm font-black text-white uppercase tracking-[0.3em] leading-none">Arush Lab</span>
-              <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-1.5">Administrative Portal</span>
-            </div>
-          </div>
-          
-          <div className="flex items-center gap-8">
-            <div className="hidden md:flex items-center gap-6 text-[10px] font-black text-slate-400 uppercase tracking-widest">
-              <span className="hover:text-blue-400 cursor-pointer transition-colors">Overview</span>
-              <span className="hover:text-blue-400 cursor-pointer transition-colors">Patients</span>
-              <span className="hover:text-blue-400 cursor-pointer transition-colors">Reports</span>
-            </div>
-            <button 
-              className="flex items-center gap-2 px-6 py-2.5 bg-white/10 hover:bg-white/20 text-white rounded-xl transition-all font-bold text-[11px] uppercase tracking-widest border border-white/10 backdrop-blur-md group" 
-              onClick={() => setIsAuthenticated(false)}
-            >
-              Terminate Session
-              <ArrowRight className="w-4 h-4 opacity-40 group-hover:translate-x-1 transition-transform" />
-            </button>
-          </div>
-        </div>
-      </nav>
+
 
       <main className="max-w-[1400px] mx-auto px-8 py-10">
         <div className="flex flex-col gap-10">
