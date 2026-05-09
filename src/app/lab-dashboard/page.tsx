@@ -12,7 +12,12 @@ function generateId() {
 }
 
 export default function AdminDashboard() {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState(() => {
+    if (typeof window !== 'undefined') {
+      return localStorage.getItem('arush_admin_auth') === 'true';
+    }
+    return false;
+  });
   const [password, setPassword] = useState("");
   const [bookings, setBookings] = useState<BookingRecord[]>([]);
   const [loading, setLoading] = useState(true);
@@ -142,7 +147,10 @@ export default function AdminDashboard() {
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
-    if (password === "admin123") setIsAuthenticated(true);
+    if (password === "admin123") {
+      setIsAuthenticated(true);
+      localStorage.setItem('arush_admin_auth', 'true');
+    }
     else alert("Incorrect password. Use 'admin123'");
   };
 
